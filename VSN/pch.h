@@ -100,3 +100,31 @@
 #include "netcore/TaskManagerEx.h"
 
 #include "netcore/PacketWrapper.h"
+
+
+
+// projects
+using ushort = unsigned short;
+using uint = unsigned int;
+
+// TEMP
+#define __TEST_MAP_ID 1
+#include "Vector2.h"
+
+#include "RequestParser.h"
+
+#include "fbs_includes.h"
+
+
+#include "Packet.h"
+
+#include "Global.h"
+#include "Player.h"
+#include "GameSession.h"
+#include "GameMap.h"
+#include "GameManager.h"
+#include "GameServer.h"
+
+#include "SessionManager.h"
+#include "PacketHandler.h"
+#include "PacketManager.h"

@@ -19,16 +19,38 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="fbs_includes.h" />
+    <ClInclude Include="GameManager.h" />
+    <ClInclude Include="GameMap.h" />
+    <ClInclude Include="GameServer.h" />
+    <ClInclude Include="GameSession.h" />
+    <ClInclude Include="Global.h" />
+    <ClInclude Include="Packet.h" />
+    <ClInclude Include="PacketHandler.h" />
+    <ClInclude Include="PacketManager.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="RequestParser.h" />
+    <ClInclude Include="SessionManager.h" />
+    <ClInclude Include="Vector2.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GameManager.cpp" />
+    <ClCompile Include="GameMap.cpp" />
+    <ClCompile Include="GameServer.cpp" />
+    <ClCompile Include="GameSession.cpp" />
+    <ClCompile Include="Global.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PacketHandler.cpp" />
+    <ClCompile Include="PacketManager.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="SessionManager.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -83,22 +105,22 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(SolutionDir)includes;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)fbs\;$(SolutionDir)includes;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)libs;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)builds\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(SolutionDir)includes;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)fbs\;$(SolutionDir)includes;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)libs;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)builds\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)includes;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)fbs\;$(SolutionDir)includes;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)libs;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)builds\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)includes;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)fbs\;$(SolutionDir)includes;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)libs;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)builds\$(Configuration)\</OutDir>
   </PropertyGroup>

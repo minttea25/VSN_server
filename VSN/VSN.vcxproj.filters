@@ -1,10 +1,99 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="pch.h" />
+    <ClInclude Include="PacketHandler.h">
+      <Filter>network</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketManager.h">
+      <Filter>network</Filter>
+    </ClInclude>
+    <ClInclude Include="RequestParser.h">
+      <Filter>network</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionManager.h">
+      <Filter>network</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManager.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMap.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameServer.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSession.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="fbs_includes.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="Global.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet.h">
+      <Filter>network</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector2.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pch.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="PacketHandler.cpp">
+      <Filter>network</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketManager.cpp">
+      <Filter>network</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionManager.cpp">
+      <Filter>network</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManager.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMap.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameServer.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameSession.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="Global.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="network">
+      <UniqueIdentifier>{596ff0fd-80b9-41bd-8448-193932fb7ac7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="game">
+      <UniqueIdentifier>{2ae4ebca-56f6-4477-a0dc-1c68f01e56fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utils">
+      <UniqueIdentifier>{8d271a58-1183-493e-b284-1f89487dae6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine">
+      <UniqueIdentifier>{451c85e7-03aa-4605-9035-fd8c60e99785}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main">
+      <UniqueIdentifier>{b478a151-831a-4e16-9b32-bd1a8bebac0e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
