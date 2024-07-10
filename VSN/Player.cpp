@@ -1,7 +1,17 @@
 #include "pch.h"
 #include "Player.h"
 
-Player::Player(uint id, std::weak_ptr<GameSession> session)
-	:_id(id), _session(session)
+Player::Player(weak_ptr<GameSession> session, const uint nid, const uint characterTypeId)
+	: GameObject(nid), _session(session)
+{
+	// TEMP
+	_hp = 300;
+}
+
+Player::~Player()
+{
+}
+
+void Player::Update(VSN::PlayerState state)
 {
 }

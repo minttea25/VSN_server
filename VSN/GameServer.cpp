@@ -39,7 +39,7 @@ bool GameServer::Start()
 	}
 	else
 	{
-		LOG(INFO) << "Starting server on " << NetCore::Utils::ToString(_ip) << "::" << _port;
+		LOG(INFO) << "Starting server on " << NetCore::Utils::ToString(_ip) << ":" << _port;
 		return true;
 	}
 }

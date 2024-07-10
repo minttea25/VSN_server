@@ -3,28 +3,26 @@
 
 GameManager::GameManager()
 {
-	// TEMP
-	{
-		auto map = NetCore::ObjectPool<GameMap>::make_shared();
-		map->Init();
-
-		_maps.insert({ map->Id(), map });
-	}
 }
 
 GameManager::~GameManager()
 {
 }
 
-void GameManager::CreateNewMap()
+void GameManager::CreateNewMap(GameInfoData data)
 {
-	// TEMP : It should not be called now.
+	auto map = NetCore::make_shared<GameMap>(data);
+
 	NetCore::_WRITE_LOCK;
+	_maps.insert({ data.GameId, map });
+}
 
-	auto map = NetCore::ObjectPool<GameMap>::make_shared();
-	map->Init();
-
-	_maps.insert({ map->Id(), map });
+void GameManager::DestroyMap(const uint gameId)
+{
+	NetCore::_WRITE_LOCK;
+	auto s = _maps.erase(gameId);
+	if (s == 1) { /*ok*/ }
+	else { /*error*/ }
 }
 
 void GameManager::Broadcast(Packet& pkt)

@@ -2,17 +2,18 @@
 
 class GameSession;
 
-class Player : public enable_shared_from_this<Player>
+class Player : public GameObject
 {
 public:
-	uint InMapId;
+	Player(weak_ptr<GameSession> session, const uint nid, const uint characterTypeId);
+	~Player();
 
-	Player(uint id, std::weak_ptr<GameSession> session);
+	void Update(VSN::PlayerState state);
 
-	uint Id() const { return _id; }
 	std::weak_ptr<GameSession> Session() const { return _session; }
 private:
-	uint _id;
 	std::weak_ptr<GameSession> _session;
+
+	int _hp;
 };
 

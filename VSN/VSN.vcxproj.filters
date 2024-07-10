@@ -43,6 +43,21 @@
     <ClInclude Include="Player.h">
       <Filter>game</Filter>
     </ClInclude>
+    <ClInclude Include="GameInfo.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="DataManager.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Server.h">
+      <Filter>main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PacketHandler.cpp">
@@ -78,6 +93,18 @@
     <ClCompile Include="Player.cpp">
       <Filter>game</Filter>
     </ClCompile>
+    <ClCompile Include="GameInfo.cpp">
+      <Filter>Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="DataManager.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Server.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="network">
@@ -94,6 +121,12 @@
     </Filter>
     <Filter Include="main">
       <UniqueIdentifier>{b478a151-831a-4e16-9b32-bd1a8bebac0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{7bbe2cc4-ea39-49e3-a892-2d0d3daeabb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{45756ca0-25c0-4f68-a133-c97ebc89d482}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -5,12 +5,14 @@ public:
 	GameManager();
 	~GameManager();
 
-	std::shared_ptr<class GameMap> Map(const uint mapId)
+	std::shared_ptr<class GameMap> Map(const uint gameId)
 	{
-		return _maps[mapId];
+		return _maps[gameId];
 	}
 
-	void CreateNewMap();
+	void CreateNewMap(GameInfoData data);
+
+	void DestroyMap(const uint gameId);
 
 	void Broadcast(Packet& pkt);
 

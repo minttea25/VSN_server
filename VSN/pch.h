@@ -107,9 +107,13 @@
 using ushort = unsigned short;
 using uint = unsigned int;
 
-// TEMP
-#define __TEST_MAP_ID 1
+#include "Global.h"
 #include "Vector2.h"
+#include "DataManager.h"
+#include "Server.h"
+#include "GameInfo.h"
+#include "GameObject.h"
+
 
 #include "RequestParser.h"
 
@@ -118,7 +122,7 @@ using uint = unsigned int;
 
 #include "Packet.h"
 
-#include "Global.h"
+
 #include "Player.h"
 #include "GameSession.h"
 #include "GameMap.h"

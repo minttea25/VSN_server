@@ -12,18 +12,8 @@ void PacketHandler::RequestPacket(const char* buffer, std::shared_ptr<GameSessio
 	}
 
 	const ushort type = RequestParser::ReqType(pkt->req_id());
-	const auto map = GGameManager->Map(__TEST_MAP_ID);
 	switch (type)
 	{
-	case RequestType::JOIN_LOBBY:
-		map->PlayerJoin(session->GetPlayer(), pkt->req_id());
-		break;
-	case RequestType::LOBBY_READY:
-		map->PlayerReady(session->GetPlayer(), pkt->req_id());
-		break;
-	case RequestType::READY_TO_START:
-		map->StartGame();
-		break;
 	// TEST
 	case 9999:
 	{

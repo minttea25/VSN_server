@@ -27,8 +27,6 @@ void GameSession::OnConnected()
 	LOG(INFO) << "Connected to client " << _remoteIp << ':' << _port;
 
 	GSessionManager->AddConnectedSession(SharedFromThis());
-
-	_player = NetCore::ObjectPool<Player>::make_shared(/*TEMP*/1, SharedFromThis());
 }
 
 void GameSession::OnSend(const int len)

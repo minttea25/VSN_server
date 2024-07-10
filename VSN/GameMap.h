@@ -1,51 +1,33 @@
 #pragma once
 
 class Player;
+class Monster;
 
 class GameMap : public NetCore::GlobalTimeJobSerializer
 {
 public:
-	GameMap();
+	GameMap(GameInfoData data);
 	~GameMap();
 
 	void Init();
 
-	void PlayerJoin(std::shared_ptr<Player> player, const uint req)
-	{
-		// TODO : Copyies player <- re-code without copy. (but its pointer! need?)
-		ReserveJob(0, &GameMap::_playerJoin, player, req);
-	}
-
-	void PlayerReady(std::shared_ptr<Player> player, const uint req)
-	{
-		ReserveJob(0, &GameMap::_playerReady, player, req);
-	}
-
-	bool CheckAllPlayerReady() const
-	{
-		return 0b1111u == _readySet;
-	}
-
-	void SetReady(const uint inMapId)
-	{
-		_readySet |= (1 << (inMapId - 1));
-	}
-
 	void StartGame();
+
+	void UpdatePlayer(const uint nid, VSN::PlayerState state)
+	{
+		// TODO : copy state
+		//ReserveJob(0, &GameMap::_updatePlayer, nid, state);
+	}
 
 	uint Id() const { return _gameId; }
 
 private:
-	void _playerJoin(std::shared_ptr<Player> player, const uint req);
-	void _playerReady(std::shared_ptr<Player> player, const uint req);
-	void _startLoadGame();
 
 private:
-	static constexpr uint START_COUNTDOWN = 3000;
-	static constexpr uint MAX_PLAYER = 4;
-	static constexpr uint MAX_PLAYER_SET = 0xFFFF;
-	uint _gameId;
-	std::shared_ptr<Player> _players[MAX_PLAYER]{nullptr, nullptr, nullptr, nullptr};
-	NetCore::_byte _readySet;
+	const uint _gameId;
+	NetCore::HashMap<uint, std::shared_ptr<Player>> _players;
+	NetCore::HashMap<uint, std::shared_ptr<Monster>> _monsters;
+
+
 };
 

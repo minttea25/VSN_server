@@ -1,0 +1,6 @@
+@VSNWebServer_HostAddress = http://localhost:5114
+
+GET {{VSNWebServer_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
