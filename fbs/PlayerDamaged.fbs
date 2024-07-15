@@ -1,0 +1,9 @@
+namespace VSN;
+
+table PlayerDamaged {
+  player_id : uint;
+  damage: int;
+}
+
+
+root_type PlayerDamaged;

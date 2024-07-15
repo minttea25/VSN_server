@@ -14,28 +14,31 @@ namespace VSNWebServer.Controllers
         private readonly AppDbContext _context = context;
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] AccountDb account)
+        public async Task<IActionResult> Register([FromBody] WebRegisterReq req)
         {
+            if (req.Verify() == false) return BadRequest();
             // TODO : Verify the new information of account
 
-            if (!Verification.VerifyRegister(account))
+            if (!Verification.VerifyRegister(req))
             {
                 // TODO : error msg
                 return BadRequest();
             }
 
-            _context.Accounts.Add(account);
+            _context.Accounts.Add(new AccountDb() { AccountId = req.AccountId, AccountPasswordHash = req.PasswordHash, AccountName = req.AccountName });
             await _context.SaveChangesAsync();
 
             // TEMP
-            return Ok(account);
+            return Ok();
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] AccountDb account)
+        public async Task<IActionResult> Login([FromBody] WebLoginReq req)
         {
-            var user = await _context.Accounts.SingleOrDefaultAsync(a => a.AccountId == account.AccountId);
-            if (user == null || Security.VerifyPassword(account.AccountPasswordHash, user.AccountPasswordHash))
+            if (req.Verify() == false) return BadRequest();
+
+            var user = await _context.Accounts.SingleOrDefaultAsync(a => a.AccountId == req.AccountId);
+            if (user == null || Security.VerifyPassword(req.PasswordHash, user.AccountPasswordHash))
             {
                 return BadRequest();
             }
@@ -45,8 +48,10 @@ namespace VSNWebServer.Controllers
         }
 
         [HttpPost("logout")]
-        public async Task<IActionResult> Logout([FromBody] WebLogoutReqPacket req)
+        public async Task<IActionResult> Logout([FromBody] WebLogoutReq req)
         {
+            if (req.Verify() == false) return BadRequest();
+
             var user = await _context.Accounts.SingleOrDefaultAsync(a => a.DbId == req.AccountDbId);
             if (user == null) return BadRequest();
             else return Ok();

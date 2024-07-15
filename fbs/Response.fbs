@@ -1,0 +1,8 @@
+namespace VSN;
+
+table Response {
+  req_id: uint; // may contains playerid or unique specifier
+  res: short;
+}
+
+root_type Response;

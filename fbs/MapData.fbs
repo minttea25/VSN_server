@@ -1,0 +1,19 @@
+include "../fbs/Types.fbs";
+
+namespace VSN;
+
+struct SpawnSchedule {
+  time: uint;
+  type_id: ushort;
+  position: Vector2;
+}
+
+table MapData {
+  map_type: uint;
+  map_size: Vector2;
+  initial_player_spawnpoint: [Vector2];
+  item_spawn_schedule: [SpawnSchedule];
+  monster_spawn_schedule: [SpawnSchedule];
+}
+
+root_type MapData;

@@ -1,0 +1,19 @@
+{
+    "map_type": 1,
+    "map_size": { "x": 100.0, "y": 100.0 },
+    "initial_player_spawnpoint": [
+      { "x": 10.0, "y": 10.0 },
+      { "x": 20.0, "y": 20.0 },
+      { "x": 30.0, "y": 30.0 },
+      { "x": 40.0, "y": 40.0 }
+    ],
+    "item_spawn_schedule": [
+      { "time": 100, "type_id": 1, "position": { "x": 50.0, "y": 50.0 } },
+      { "time": 200, "type_id": 2, "position": { "x": 60.0, "y": 60.0 } }
+    ],
+    "monster_spawn_schedule": [
+      { "time": 150, "type_id": 3, "position": { "x": 70.0, "y": 70.0 } },
+      { "time": 250, "type_id": 4, "position": { "x": 80.0, "y": 80.0 } }
+    ]
+  }
+  

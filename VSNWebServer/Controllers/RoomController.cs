@@ -7,64 +7,67 @@ namespace VSNWebServer.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RoomController(GameDbContext context) : ControllerBase
+    public class RoomController : ControllerBase
     {
-        private readonly GameDbContext _redisContext = context;
-
-        private const int MAX_PLAYER_IN_A_ROOM = 4;
-
-        [HttpPost("enter")]
-        public async Task<IActionResult> EnterRoom([FromBody] WebRoomInfo req)
+        [HttpPost("join")]
+        public IActionResult JoinRoom([FromBody] WebRoomInfo req)
         {
-            var roomKey = $"room:{req.RoomId}";
-            var playerCount = await _redisContext.Database.HashLengthAsync(roomKey);
+            _ = RoomManager.GetRoom(req.RoomId, true);
 
-            if (playerCount >= MAX_PLAYER_IN_A_ROOM) return BadRequest("Room is full.");
+            if (RoomManager.JoinRoom(req.RoomId, req.AccountDbId))
+            {
+                RoomManager.NotifyChangesToClients(req.RoomId);
+                return Ok();
+            }
 
-            await _redisContext.Database.HashSetAsync(roomKey, req.AccountDbId, "not ready");
-            return Ok();
+            else return BadRequest();
         }
 
         [HttpPost("leave")]
-        public async Task<IActionResult> LeaveRoom([FromBody] WebRoomInfo req)
+        public IActionResult LeaveRoom([FromBody] WebRoomInfo req)
         {
-            var roomKey = $"room:{req.RoomId}";
-
-            await _redisContext.Database.HashDeleteAsync(roomKey, req.AccountDbId);
-            return Ok();
+            if (RoomManager.LeaveRoom(req.RoomId, req.AccountDbId))
+            {
+                RoomManager.NotifyChangesToClients(req.RoomId);
+                return Ok();
+            }
+            else return BadRequest();
         }
 
         [HttpPost("ready")]
-        public async Task<IActionResult> SetReady([FromBody] WebRoomInfo req)
+        public IActionResult SetReady([FromBody] WebRoomInfo req)
         {
-            var roomKey = $"room:{req.RoomId}";
-            var playerStatus = await _redisContext.Database.HashGetAsync(roomKey, req.AccountDbId);
+            Room? room = RoomManager.GetRoom(req.RoomId, false);
+            if (room == null) return BadRequest();
 
-            if (playerStatus.IsNullOrEmpty)
+            if (room.UserReady(req.AccountDbId, true) == false)
             {
-                return BadRequest("Player not in room.");
+                return BadRequest();
             }
 
-            await _redisContext.Database.HashSetAsync(roomKey, req.AccountDbId, "ready");
-
-            // 모든 플레이어가 준비 상태인지 확인
-            var allReady = true;
-            var players = await _redisContext.Database.HashGetAllAsync(roomKey);
-            foreach (var player in players)
-            {
-                if (player.Value != "ready")
-                {
-                    allReady = false;
-                    break;
-                }
-            }
-
-            if (allReady)
-            {
-                // TODO: 모든 플레이어가 준비 상태일 때 게임 서버에 신호를 보내는 로직을 추가
-            }
-
+            RoomManager.NotifyChangesToClients(req.RoomId);
             return Ok();
+        }
+
+        [HttpPost("status/{roomId}")]
+        public async Task<IActionResult> GetRoomStatus(uint roomId)
+        {
+            Room? room = RoomManager.GetRoom(roomId, false);
+            if (room == null) return BadRequest();
+
+            await room.WaitRoomStatusChanged();
+
+            // 1. Client에서 해당 Post 요청 
+            // 2. 해당 room에 대한 다른 변화(changes)가 있을 때까지 await (await room.WaitRoomStatusChanged)
+            // 3. 변경 있을 경우 해당 요청에 대한 응답 전송
+            // 응답에는 플레이어의 상태(현재 방의 플레이어, ready 상태, 이름), 방 이름, 모두 ready인지 포함
+            return Ok(new WebRoomStatus()
+            {
+                Players = room.GetUserInfo(),
+                RoomId = room.RoomId,
+                RoomName = room.RoomName,
+                AllReady = room.UsersAllReady(),
+            });
         }
     }
 }

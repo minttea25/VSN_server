@@ -28,7 +28,15 @@ void WebSession::OnDisconnected(const int error)
 
 void WebSession::OnRecvPacket(const char* buffer, const ushort id)
 {
-	// TODO
+	const auto pkt = VSN::GetWebGameInfoData(buffer);
+
+	if (pkt == nullptr)
+	{
+		std::cerr << "Wrong buffer to parse GameInfoData.";
+		return;
+	}
+
+	DebugUtil::Show(pkt);
 }
 
 Server::Server(const std::wstring& ip, const ushort port)

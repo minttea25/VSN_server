@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataManager.h" />
+    <ClInclude Include="DebugUtil.h" />
     <ClInclude Include="fbs_includes.h" />
     <ClInclude Include="GameInfo.h" />
     <ClInclude Include="GameManager.h" />
@@ -41,7 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DataManager.cpp" />
-    <ClCompile Include="GameInfo.cpp" />
+    <ClCompile Include="DebugUtil.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameMap.cpp" />
     <ClCompile Include="GameServer.cpp" />
@@ -114,22 +115,22 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(SolutionDir)fbs\;$(SolutionDir)includes;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)includes_fbs\;$(SolutionDir)includes\</IncludePath>
     <LibraryPath>$(SolutionDir)libs;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)builds\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(SolutionDir)fbs\;$(SolutionDir)includes;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)includes_fbs\;$(SolutionDir)includes\</IncludePath>
     <LibraryPath>$(SolutionDir)libs;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)builds\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)fbs\;$(SolutionDir)includes;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)includes_fbs\;$(SolutionDir)includes\</IncludePath>
     <LibraryPath>$(SolutionDir)libs;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)builds\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)fbs\;$(SolutionDir)includes;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)includes_fbs\;$(SolutionDir)includes\</IncludePath>
     <LibraryPath>$(SolutionDir)libs;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)builds\$(Configuration)\</OutDir>
   </PropertyGroup>

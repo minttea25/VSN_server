@@ -1,0 +1,17 @@
+include "Types.fbs";
+
+namespace VSN;
+
+struct MonsterStateInfo {
+  nid : uint;
+  state: ubyte;
+  pos: Vector2;
+  dir: Vector2;
+}
+
+table MonsterStates {
+  infos: [MonsterStateInfo];
+}
+
+
+root_type MonsterStates;

@@ -1,0 +1,8 @@
+namespace VSN;
+
+table SimplePacket {
+  id: uint;
+  msg: string;
+}
+
+root_type SimplePacket;

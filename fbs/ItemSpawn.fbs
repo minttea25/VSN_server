@@ -1,0 +1,15 @@
+include "Types.fbs";
+
+namespace VSN;
+
+struct ItemSpawnInfo {
+  item_nid: uint;
+  item_type: ubyte;
+  pos: Vector2;
+}
+
+table ItemSpawn {
+  infos: [ItemSpawnInfo];
+}
+
+root_type ItemSpawn;

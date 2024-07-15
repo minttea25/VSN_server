@@ -1,0 +1,9 @@
+namespace VSN;
+
+table Req_GetItem {
+  req_id: uint;
+  item_nid: uint;
+}
+
+
+root_type Req_GetItem;

@@ -1,0 +1,9 @@
+namespace VSN;
+
+table Req_GetExp {
+  req_id: uint;
+  exp_item_id: uint;
+}
+
+
+root_type Req_GetExp;

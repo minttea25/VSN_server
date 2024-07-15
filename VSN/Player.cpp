@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "Player.h"
 
-Player::Player(weak_ptr<GameSession> session, const uint nid, const uint characterTypeId)
-	: GameObject(nid), _session(session)
+Player::Player(const uint nid, const PlayerData data)
+	: GameObject(nid), _data(data), _nid(nid), _ready(false)
 {
 	// TEMP
 	_hp = 300;

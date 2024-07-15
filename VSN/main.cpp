@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "DebugUtil.h"
 
 const std::string LOGDIR("../Logs");
 const std::wstring IP(L"127.0.0.1");
@@ -10,8 +11,21 @@ constexpr ushort WAITING_WEB_PORT = 8070;
 
 int main(int argc, char* argv)
 {
-	GDataManager = NetCore::make_shared<DataManager>();
+	GDataManager = std::make_shared<DataManager>();
 
+	{
+		std::vector<uint8_t> buf;
+		GDataManager->LoadMapData(1, buf);
+		auto map_data = VSN::GetMapData(buf.data());
+		DebugUtil::Show(map_data);
+
+	}
+	{
+		std::vector<uint8_t> buf;
+		GDataManager->LoadMapData(2, buf);
+		auto map_data = VSN::GetMapData(buf.data());
+		DebugUtil::Show(map_data);
+	}
 
 	NetCore::InitNetCore(argv, LOGDIR);
 

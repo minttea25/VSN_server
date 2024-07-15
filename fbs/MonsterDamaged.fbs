@@ -1,0 +1,16 @@
+include "Types.fbs";
+
+namespace VSN;
+
+struct DamagedMonsterInfo {
+  nid : uint;
+  damage: short;
+  dead: bool;
+}
+
+table MonsterDamaged {
+  infos: [DamagedMonsterInfo];
+}
+
+
+root_type MonsterDamaged;

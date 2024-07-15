@@ -1,12 +1,24 @@
 #include "pch.h"
 #include "GameSession.h"
 
-GameSession::GameSession() : _remoteIp(""), _port(UNSIGNED_INVALID)
+GameSession::GameSession() 
+	: _remoteIp(""), _port(UNSIGNED_INVALID),
+	_accountDbId(UNSIGNED_INVALID), _ready(false)
 {
 }
 
 GameSession::~GameSession()
 {
+}
+
+void GameSession::SetInfo(const uint gameId, const uint accountDbId, const std::string& authToken)
+{
+	_authToken = authToken;
+	_accountDbId = accountDbId;
+
+	auto map = GGameManager->Map(gameId);
+	if (map == nullptr) Disconnect();
+	if (map->PlayerConnected(SharedFromThis()) == false) Disconnect();
 }
 
 void GameSession::OnConnected()

@@ -7,9 +7,9 @@ enum PacketId : ushort
     // Common 1 ~
     REQUEST = 1,
     RESPONSE = 2,
+    SIMPLE = 3,
 
     // Game 100 ~
-    GAME_START = 101,
     ITEM_SPAWN = 102,
 
     // Monster 200 ~
@@ -35,6 +35,11 @@ enum PacketId : ushort
     // Res to client 2000 ~
     RES_GET_EXP = 2001,
 
+};
+
+enum SimpleId
+{
+    SP_GAME_START = 1,
 };
 
 enum ResId
@@ -70,6 +75,17 @@ flatbuffers::FlatBufferBuilder fb(size, &allocator);    \
 class Packets
 {
 public:
+    static Packet Simple(const uint id, const std::string& msg)
+    {
+        __BUILDER(128);
+        auto msg_os = fb.CreateString(msg);
+        auto pkt_os = VSN::CreateSimplePacket(fb, id, msg_os);
+        fb.Finish(pkt_os);
+
+        return __PACKET(SIMPLE);
+
+    }
+
     static Packet Request(const uint req_id)
     {
         NetCore::FBAllocator allocator;

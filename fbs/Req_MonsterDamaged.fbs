@@ -1,0 +1,16 @@
+include "Types.fbs";
+
+namespace VSN;
+
+struct DamagedMonsterReqInfo {
+  nid : uint;
+  damage: short;
+}
+
+table Req_MonsterDamaged {
+  req_id: uint;
+  infos: [DamagedMonsterReqInfo];
+}
+
+
+root_type Req_MonsterDamaged;

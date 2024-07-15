@@ -1,0 +1,15 @@
+namespace VSN;
+
+// client -> server : info of getting exp
+// server -> client : info of adding exp
+// in server, compare total exp for monsters and recvd info of getting exp from client
+
+table Res_GetExp {
+  req_id: uint;
+  res: bool;
+  level_up: bool;
+  now_level: ushort;
+}
+
+
+root_type Res_GetExp;

@@ -14,6 +14,8 @@
 
 #define GLOG_USE_GLOG_EXPORT /*Definition for glog*/
 #define GLOG_NO_ABBREVIATED_SEVERITIES /*Definition for glog*/
+#define NOGDI
+
 
 #include <iostream>
 #include <vector>
@@ -102,10 +104,18 @@
 #include "netcore/PacketWrapper.h"
 
 
+#include <filesystem>
+#include "parser.h"
+#include <fstream>
+#include "flatbuffers/idl.h"
 
 // projects
 using ushort = unsigned short;
 using uint = unsigned int;
+
+#include "fbs_includes.h"
+
+#include "DebugUtil.h"
 
 #include "Global.h"
 #include "Vector2.h"
@@ -117,7 +127,7 @@ using uint = unsigned int;
 
 #include "RequestParser.h"
 
-#include "fbs_includes.h"
+
 
 
 #include "Packet.h"

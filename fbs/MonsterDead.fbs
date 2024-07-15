@@ -1,0 +1,13 @@
+include "Types.fbs";
+
+namespace VSN;
+
+struct MonsterDeadInfo {
+  nid: uint;
+}
+
+table MonsterDead {
+  infos: [MonsterDeadInfo];
+}
+
+root_type MonsterDead;

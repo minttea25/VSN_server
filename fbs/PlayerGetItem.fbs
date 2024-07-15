@@ -1,0 +1,11 @@
+namespace VSN;
+
+// if player_id is not my id, despawn the item;
+table PlayerGetItem {
+  player_id: uint;
+  item_nid: uint;
+  item_type: ubyte;
+}
+
+
+root_type PlayerGetItem;

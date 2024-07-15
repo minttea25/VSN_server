@@ -1,0 +1,10 @@
+namespace VSN;
+
+table Req_PlayerDamaged {
+  req_id: uint;
+  damage: int;
+  dead: bool;
+}
+
+
+root_type Req_PlayerDamaged;

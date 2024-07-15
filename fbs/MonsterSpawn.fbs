@@ -1,0 +1,16 @@
+include "Types.fbs";
+
+namespace VSN;
+
+struct MonsterSpawnInfo {
+  nid: uint;
+  monster_type: ushort;
+  pos: Vector2;
+}
+
+table SpawnMonsters {
+  infos: [MonsterSpawnInfo];
+}
+
+
+root_type SpawnMonsters;

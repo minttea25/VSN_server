@@ -1,0 +1,13 @@
+include "Types.fbs";
+
+namespace VSN;
+
+table PlayerState {
+  player_id : uint;
+  change_flag: uint;
+  toward_left: bool;
+  position: Vector2;
+  state: ubyte;
+}
+
+root_type PlayerState;

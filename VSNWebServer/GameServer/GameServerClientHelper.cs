@@ -5,6 +5,13 @@ namespace VSNWebServer.GameServer
 {
     public class GameServerClientHelper(string ip, int port)
     {
+        public static void Init(string ip, int port)
+        {
+            Instance = new(ip, port);
+        }
+
+        public static GameServerClientHelper? Instance { get; private set; } = null;
+
         private readonly string _ip = ip;
         private readonly int _port = port;
         private readonly TcpClient _client = new();
@@ -14,6 +21,11 @@ namespace VSNWebServer.GameServer
         {
             await _client.ConnectAsync(_ip, _port);
             _networkStream = _client.GetStream();
+        }
+
+        public async void SendAsync(byte[] data)
+        {
+            await _networkStream!.WriteAsync(data);
         }
 
         // TEMP

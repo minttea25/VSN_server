@@ -1,0 +1,10 @@
+include "Types.fbs";
+
+namespace VSN;
+
+table GameStart {
+  spawn_pos: Vector2;
+}
+
+
+root_type GameStart;

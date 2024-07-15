@@ -1,0 +1,7 @@
+namespace VSN;
+
+table Request {
+  req_id: uint;
+}
+
+root_type Request;

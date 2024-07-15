@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include "WebGameInfo_generated.h"
 #include "GameStart_generated.h"
 #include "ItemSpawn_generated.h"
 #include "MonsterDamaged_generated.h"
@@ -21,4 +21,7 @@
 #include "Req_PlayerDamaged_generated.h"
 #include "Req_PlayerUpgrade_generated.h"
 #include "Res_GetExp_generated.h"
+#include "SimplePacket_generated.h"
+
+#include "MapData_generated.h"
 

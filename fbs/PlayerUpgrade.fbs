@@ -1,0 +1,23 @@
+namespace VSN;
+
+union UpgradeInfo {
+  StatUpgrade, SkillUpgrade
+}
+
+table StatUpgrade {
+  stat_type: ubyte;
+  value: ushort;
+}
+
+table SkillUpgrade {
+  skill_type: ubyte;
+  value: ushort = 1;
+}
+
+table PlayerUpgrade {
+  player_id: uint;
+  info: UpgradeInfo;
+}
+
+
+root_type PlayerUpgrade;

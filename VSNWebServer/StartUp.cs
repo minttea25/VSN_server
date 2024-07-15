@@ -21,6 +21,7 @@ namespace VSNWebServer
             //    => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
             //services.AddSingleton<GameDbContext>();
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -41,13 +42,6 @@ namespace VSNWebServer
             app.UseRouting();
 
             app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
-            });
         }
     }
 }

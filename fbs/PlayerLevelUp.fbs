@@ -1,0 +1,9 @@
+namespace VSN;
+
+table PlayerLevelUp {
+  player_id: uint;
+  now_level: ushort;
+}
+
+
+root_type PlayerLevelUp;

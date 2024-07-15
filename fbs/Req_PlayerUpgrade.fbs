@@ -1,0 +1,11 @@
+include "PlayerUpgrade.fbs";
+
+namespace VSN;
+
+table Req_PlayerUpgrade {
+  req_id: uint;
+  info: UpgradeInfo;
+}
+
+
+root_type Req_PlayerUpgrade;
