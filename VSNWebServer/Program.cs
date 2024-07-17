@@ -8,8 +8,8 @@ const ushort GAMESERVER_PORT = 8070;
 
 Thread.Sleep(1000);
 
-GameServerClientHelper.Init(GAMESERVER_IP, GAMESERVER_PORT);
-await GameServerClientHelper.Instance!.ConnectAsync();
+//GameServerClientHelper.Init(GAMESERVER_IP, GAMESERVER_PORT);
+//await GameServerClientHelper.Instance!.ConnectAsync();
 
 var builder = Host.CreateDefaultBuilder(args)
     .ConfigureWebHostDefaults(config =>

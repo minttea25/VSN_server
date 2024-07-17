@@ -37,14 +37,14 @@ namespace VSNWebServer.Controllers
         {
             if (req.Verify() == false) return BadRequest();
 
-            var user = await _context.Accounts.SingleOrDefaultAsync(a => a.AccountId == req.AccountId);
-            if (user == null || Security.VerifyPassword(req.PasswordHash, user.AccountPasswordHash))
+            var account = await _context.Accounts.SingleOrDefaultAsync(a => a.AccountId == req.AccountId && a.AccountPasswordHash == req.PasswordHash);
+            if (account == null || Security.VerifyPassword(req.PasswordHash, account.AccountPasswordHash))
             {
                 return BadRequest();
             }
 
             // TODO : create and return token
-            return Ok();
+            return Ok(new WebLoginRes() { AccountName = account.AccountName, AccountDbId = account.DbId, });
         }
 
         [HttpPost("logout")]
@@ -55,6 +55,12 @@ namespace VSNWebServer.Controllers
             var user = await _context.Accounts.SingleOrDefaultAsync(a => a.DbId == req.AccountDbId);
             if (user == null) return BadRequest();
             else return Ok();
+        }
+
+        [HttpPost("login_test")]
+        public IActionResult TestLogin([FromBody] WebLoginReq req)
+        {
+            return Ok(new WebLoginRes() { AccountName = "Test12345678", AccountDbId = 12345678, });
         }
     }
 }

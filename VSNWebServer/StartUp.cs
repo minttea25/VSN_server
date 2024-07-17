@@ -20,7 +20,7 @@ namespace VSNWebServer
             //    options
             //    => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
-            //services.AddSingleton<GameDbContext>();
+            services.AddDbContext<AppDbContext>();
 
         }
 
@@ -37,11 +37,13 @@ namespace VSNWebServer
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            //app.UseStaticFiles();
 
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseEndpoints(endpoints => { endpoints.MapControllerRoute("default", "{controller-Hone}/{action=Index}/{id?}"); });
         }
     }
 }

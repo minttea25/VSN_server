@@ -1,12 +1,13 @@
 ﻿namespace VSNWebServer.Packets
 {
-    interface IWebPacket
+    interface IWebRes { }
+    interface IWebReq
     {
         public bool Verify();
     }
 
     [System.Serializable]
-    public class WebLoginReq : IWebPacket
+    public class WebLoginReq : IWebReq
     {
         public string AccountId { get; set; } = "";
         public string PasswordHash { get; set; } = "";
@@ -18,7 +19,7 @@
     }
 
     [System.Serializable]
-    public class WebRegisterReq : IWebPacket
+    public class WebRegisterReq : IWebReq
     {
         public string AccountId { get; set; } = "";
         public string AccountName { get; set; } = "";
@@ -32,14 +33,21 @@
 
 
     [System.Serializable]
-    public class WebLogoutReq : IWebPacket
+    public class WebLogoutReq : IWebReq
     {
         public uint AccountDbId { get; set; }
         public bool Verify() { return AccountDbId != 0; }
     }
 
     [System.Serializable]
-    public class WebRoomInfo : IWebPacket
+    public class WebLoginRes : IWebRes
+    {
+        public uint AccountDbId { get; set; }
+        public required string AccountName { get; set; }
+    }
+
+    [System.Serializable]
+    public class WebRoomInfo : IWebReq
     {
         public uint AccountDbId { get; set; }
         public string UserName { get; set; } = "";
@@ -51,7 +59,7 @@
     }
 
     [System.Serializable]
-    public class WebRoomStatus()
+    public class WebRoomStatus() : IWebRes
     {
         [System.Serializable]
         public class UserInfo

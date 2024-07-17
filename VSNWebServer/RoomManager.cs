@@ -61,7 +61,7 @@ namespace VSNWebServer
         {
             if (PlayerCount >= MaxPlayerCount) return false;
 
-            var user = Users.FirstOrDefault(u => u.Valid == false);
+            var user = Users.FirstOrDefault(u => u.Valid == false && userId != u.UserId);
             if (user == null) return false;
             else
             {
@@ -157,7 +157,12 @@ namespace VSNWebServer
         {
             if (Rooms.TryGetValue(roomId, out Room? room))
             {
-                return room.RemovePlayer(userId);
+                bool ret = room.RemovePlayer(userId);
+                if (room.PlayerCount == 0)
+                {
+                    Rooms.Remove(userId, out _);
+                }
+                return ret;
             }
             else return false;
         }
