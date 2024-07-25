@@ -7,6 +7,13 @@ namespace VSNWebServer.Utils
     {
         public static bool VerifyRegister(WebRegisterReq req)
         {
+            // TODO
+            return true;
+        }
+
+        public static bool VerifyRoomName(string roomName)
+        {
+            // TODO
             return true;
         }
     }

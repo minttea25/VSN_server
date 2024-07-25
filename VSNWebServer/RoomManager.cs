@@ -1,30 +1,45 @@
-﻿using System.Collections.Concurrent;
+﻿﻿using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 using VSNWebServer.Packets;
+using VSNWebServer.RoomServers;
 
 namespace VSNWebServer
 {
-    public class User
+
+    public class User(int index)
     {
-        const uint INVALID_USER_ID = 0;
+        public const uint INVALID_USER_ID = 0;
 
         public uint UserId { get; private set; } = INVALID_USER_ID;
         public string UserName { get; private set; } = "";
         public bool IsReady { get; private set; } = false;
         public bool Valid => UserId != INVALID_USER_ID;
+        public int Index { get; private set; } = index;
+        public bool IsHost { get; private set; } = false;
+        public WebSession? Session { get; private set; } = null;
 
-        public bool SetUser(uint userId)
+        public bool SetUser(uint userId, string userName, bool host, WebSession session)
         {
             if (UserId != INVALID_USER_ID) return false;
             UserId = userId;
+            UserName = userName;
             IsReady = false;
+            IsHost = host;
+            Session = session;
             return true;
+        }
+
+        public void ToHost()
+        {
+            IsHost = true;
         }
 
         public bool Reset()
         {
-            if (UserId == INVALID_USER_ID) return false;
             UserId = INVALID_USER_ID;
             IsReady = false;
+            IsHost = false;
+            Session = null;
             return true;
         }
 
@@ -36,8 +51,15 @@ namespace VSNWebServer
         }
     }
 
+    // TODO : clear the chats when all clients received them.
     public class Room
     {
+        struct Chat
+        {
+            public long Time;
+            public string Content;
+        }
+
         public Room(uint roomId, string roomName = RoomManager.DEFAULT_ROOM_NAME, uint maxPlayerCount = RoomManager.MAX_PLAYER_IN_A_ROOM)
         {
             MaxPlayerCount = maxPlayerCount;
@@ -45,19 +67,80 @@ namespace VSNWebServer
             RoomId = roomId;
             RoomName = roomName;
             Users = new User[maxPlayerCount];
-            for (int i = 0; i < Users.Length; i++) Users[i] = new User();
+            _chats = new List<Chat>[maxPlayerCount];
+            for (int i = 0; i < maxPlayerCount; i++)
+            {
+                Users[i] = new User(i);
+                _chats[i] = [];
+            }
         }
-
 
         public uint RoomId { get; private set; }
         public string RoomName { get; private set; }
-        public User[] Users { get; private set; }
         public uint PlayerCount { get; private set; }
-        public uint MaxPlayerCount { get; private set; }
+        public User[] Users { get; private set; }
 
-        private TaskCompletionSource tcs = new();
+        public readonly uint MaxPlayerCount;
 
-        public bool AddPlayer(uint userId)
+        private readonly List<Chat>[] _chats;
+
+        /// <summary>
+        /// Broadcast message serialized with MessageTypes.RecvAnnouncement
+        /// </summary>
+        /// <param name="msg">Plain text to show at chat ui of client</param>
+        public void Announce(string msg)
+        {
+            var announcement = Utils.Json.Serialize(MessageTypes.Announcement, msg);
+            foreach (var player in Users)
+            {
+                if (player.Valid) player.Session?.SendPlain(announcement);
+            }
+        }
+
+        /// <summary>
+        /// Broadcast the text verbatim.
+        /// </summary>
+        /// <param name="text"></param>
+        public void Broadcast(string text)
+        {
+            foreach (var player in Users)
+            {
+                if (player.Valid) player.Session?.SendPlain(text);
+            }
+        }
+
+        public void Clear()
+        {
+            foreach (var u in Users) u.Reset();
+            foreach (var c in _chats) c.Clear();
+            RoomId = 0;
+            RoomName = string.Empty;
+            PlayerCount = 0;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public WebRoomInfoRes GetRoomInfo()
+        {
+            return new(this);
+        }
+
+        public User? GetPlayer(uint playerId)
+        {
+            return Users.FirstOrDefault(p => p.UserId == playerId);
+        }
+
+        public User? GetPlayerIndex(uint idx)
+        {
+            if (idx >= MaxPlayerCount) return null;
+            else return Users[idx];
+        }
+
+        public void ChangeRoomName(string roomName)
+        {
+            RoomName = roomName;
+        }
+
+        public bool AddPlayer(uint userId, string userName, WebSession session)
         {
             if (PlayerCount >= MaxPlayerCount) return false;
 
@@ -65,25 +148,53 @@ namespace VSNWebServer
             if (user == null) return false;
             else
             {
-                user.SetUser(userId);
+                user.SetUser(userId, userName, PlayerCount == 0, session);
                 PlayerCount++;
                 return true;
             }
         }
 
-        public bool RemovePlayer(uint userId)
+        public bool ChangeHostNext()
+        {
+            // move host to next index user
+            for (int i = 0; i < MaxPlayerCount; ++i)
+            {
+                if (Users[i].Valid && Users[i].IsHost == false)
+                {
+                    Users[i].ToHost();
+                    return true;
+                }
+            }
+
+            // It means there is no more player to set host.
+            return false;
+        }
+
+        public bool RemovePlayer(uint userId, out UserInfo? info)
         {
             var user = Users.SingleOrDefault(u => u.UserId == userId);
-            if (user == null ) return false;
+            if (user == null)
+            {
+                info = null;
+                return false;
+            }
             else
             {
+                _ = ChangeHostNext();
+
+                info = new()
+                {
+                    UserId = userId,
+                    UserName = user.UserName,
+                };
                 user.Reset();
                 PlayerCount--;
+
                 return true;
             }
         }
 
-        public bool UserReady(uint userId, bool ready)
+        public bool UserReady(uint userId, bool ready = true)
         {
             var user = Users.SingleOrDefault(u => u.UserId == userId);
             if (user == null) return false;
@@ -93,36 +204,24 @@ namespace VSNWebServer
             }
         }
 
-        public List<WebRoomStatus.UserInfo> GetUserInfo()
-        {
-            List<WebRoomStatus.UserInfo> info = [];
-            foreach (var user in Users)
-            {
-                if (user.Valid)
-                {
-                    info.Add(new WebRoomStatus.UserInfo { UserId = user.UserId, UserName = user.UserName, IsReady = user.IsReady });
-                }
-                else
-                {
-                    info.Add(new WebRoomStatus.UserInfo { UserId = 0, UserName = "", IsReady = false });
-                }
-            }
-
-            return info;
-        }
-    
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool UsersAllReady()
         {
             return Users.All(u => u.IsReady);
         }
-        public async Task WaitRoomStatusChanged()
+
+        public bool AddChat(uint playerId, long time, string chat)
         {
-            await tcs.Task;
+            var user = Users.FirstOrDefault(p => p.UserId == playerId);
+            if (user == null) return false;
+
+            _chats[user.Index].Add(new Chat() { Time = time, Content = chat });
+            return true;
         }
 
-        public void NotifyToClients()
+        public WebUserInfo[] GetUserInfo()
         {
-            tcs.TrySetResult();
+            return Users.Select(u => new WebUserInfo(u)).ToArray();
         }
     }
 
@@ -135,6 +234,8 @@ namespace VSNWebServer
 
         public static Room? GetRoom(uint roomId, bool createIfNoSuchRoom = true)
         {
+            if (roomId == 0) return null;
+
             if (!Rooms.TryGetValue(roomId, out Room? value))
             {
                 if (!createIfNoSuchRoom) return null;
@@ -144,32 +245,34 @@ namespace VSNWebServer
             return value;
         }
 
-        public static bool JoinRoom(uint roomId, uint userId)
-        {
-            if (Rooms.TryGetValue(roomId,out Room? room))
-            {
-                return room.AddPlayer(userId);
-            }
-            else return false;
-        }
-
-        public static bool LeaveRoom(uint roomId, uint userId)
+        public static bool JoinRoom(uint roomId, uint userId, string userName, WebSession session)
         {
             if (Rooms.TryGetValue(roomId, out Room? room))
             {
-                bool ret = room.RemovePlayer(userId);
-                if (room.PlayerCount == 0)
-                {
-                    Rooms.Remove(userId, out _);
-                }
-                return ret;
+                return room.AddPlayer(userId, userName, session);
             }
             else return false;
         }
 
-        public static void NotifyChangesToClients(uint roomId)
+        public static bool LeaveRoom(uint roomId, uint userId, out UserInfo? info)
         {
-            GetRoom(roomId)?.NotifyToClients();
+            if (Rooms.TryGetValue(roomId, out Room? room))
+            {
+                bool ret = room.RemovePlayer(userId, out info);
+                if (room.PlayerCount == 0)
+                {
+                    _ = Rooms.Remove(roomId, out var r);
+                    Console.WriteLine($"Room[id={roomId}] is removed.");
+                    r?.Clear();
+                }
+                return ret;
+            }
+            
+            else
+            {
+                info = null;
+                return false;
+            }
         }
     }
 

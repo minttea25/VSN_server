@@ -56,11 +56,5 @@ namespace VSNWebServer.Controllers
             if (user == null) return BadRequest();
             else return Ok();
         }
-
-        [HttpPost("login_test")]
-        public IActionResult TestLogin([FromBody] WebLoginReq req)
-        {
-            return Ok(new WebLoginRes() { AccountName = "Test12345678", AccountDbId = 12345678, });
-        }
     }
 }

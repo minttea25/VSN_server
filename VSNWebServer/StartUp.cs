@@ -43,7 +43,11 @@ namespace VSNWebServer
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllerRoute("default", "{controller-Hone}/{action=Index}/{id?}"); });
+            app.UseWebSockets(); 
+
+            app.UseEndpoints(endpoints => { 
+                endpoints.MapControllerRoute("default", "{controller-Hone}/{action=Index}/{id?}");
+            });
         }
     }
 }
