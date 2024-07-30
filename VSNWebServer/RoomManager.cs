@@ -1,7 +1,12 @@
-﻿﻿using System.Collections.Concurrent;
+﻿using Google.FlatBuffers;
+using Newtonsoft.Json.Linq;
+using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
+using VSN;
+using VSNWebServer.GameServer;
 using VSNWebServer.Packets;
 using VSNWebServer.RoomServers;
+using WebSocketSharp;
 
 namespace VSNWebServer
 {
@@ -223,6 +228,95 @@ namespace VSNWebServer
         {
             return Users.Select(u => new WebUserInfo(u)).ToArray();
         }
+    
+        public void GameStart()
+        {
+            // TODO : Check condition
+
+            uint game_id = RoomManager.GetGameId();
+            uint map_type_id = 1;
+            uint[] spawnable_items = [1, 2, 3, 4, 5];
+            byte difficulty = (byte)1;
+            uint[] pid = new uint[MaxPlayerCount];
+            uint[] pcid = new uint[MaxPlayerCount];
+            string[] auth_tokens = new string[MaxPlayerCount];
+            int i = 0;
+            foreach (var user in Users)
+            {
+                pid[i] = user.UserId;
+
+                pcid[i] = 1;// TODO
+
+                auth_tokens[i] = Security.PlayerAuthToken("127.0.0.1", user.UserId);
+
+
+                i++;
+            }
+
+            i = 0;
+            FlatBufferBuilder fb = new(1024);
+            StringOffset[] auth_string_ofs = new StringOffset[MaxPlayerCount];
+            foreach (var token in auth_tokens)
+            {
+                auth_string_ofs[i++] = fb.CreateString(token);
+            }
+            var item_ofs = WebGameInfoData.CreateSpawnableItemsVector(fb, spawnable_items);
+            var pid_ofs = WebGameInfoData.CreatePlayerAccountIdVector(fb, pid);
+            var pcid_ofs = WebGameInfoData.CreatePlayerCharacterTypeVector(fb, pcid);
+            var auth_ofs = WebGameInfoData.CreatePlayerAuthTokenVector(fb, auth_string_ofs);
+            var data = WebGameInfoData.CreateWebGameInfoData(
+                fb, game_id: game_id, map_type_id: map_type_id,
+                spawnable_itemsOffset: item_ofs,
+                difficulty: difficulty,
+                player_account_idOffset: pid_ofs,
+                player_character_typeOffset: pcid_ofs,
+                player_auth_tokenOffset: auth_ofs);
+            fb.Finish(data.Value);
+            GameServerClientHelper.Instance?.SendAsync(fb.SizedByteArray());
+        }
+    
+        public void TestGameStart()
+        {
+            uint game_id = RoomManager.GetGameId();
+            uint map_type_id = 1;
+            uint[] spawnable_items = [1, 2, 3, 4, 5];
+            byte difficulty = 1;
+            uint[] pid = new uint[1];
+            uint[] pcid = new uint[1];
+            string[] auth_tokens = new string[1];
+            pid[0] = Users[0].UserId;
+            pcid[0] = 1;// TODO
+            auth_tokens[0] = Security.PlayerAuthToken("127.0.0.1", Users[0].UserId);
+
+            FlatBufferBuilder fb = new(1024);
+            StringOffset[] auth_string_ofs = new StringOffset[1];
+            auth_string_ofs[0] = fb.CreateString(auth_tokens[0]);
+
+            var item_ofs = WebGameInfoData.CreateSpawnableItemsVector(fb, spawnable_items);
+            var pid_ofs = WebGameInfoData.CreatePlayerAccountIdVector(fb, pid);
+            var pcid_ofs = WebGameInfoData.CreatePlayerCharacterTypeVector(fb, pcid);
+            var auth_ofs = WebGameInfoData.CreatePlayerAuthTokenVector(fb, auth_string_ofs);
+            var data = WebGameInfoData.CreateWebGameInfoData(
+                fb, game_id: game_id, map_type_id: map_type_id,
+                difficulty: difficulty,
+                spawnable_itemsOffset: item_ofs,
+                player_account_idOffset: pid_ofs,
+                player_character_typeOffset: pcid_ofs,
+                player_auth_tokenOffset: auth_ofs);
+            fb.Finish(data.Value);
+            GameServerClientHelper.Instance?.SendAsync(fb.SizedByteArray());
+
+            // send to client
+            Broadcast(Utils.Json.Serialize(MessageTypes.GameStart,
+                new WebGameStart()
+                {
+                    RoomId = RoomId,
+                    GameId = game_id,
+                    GameServerIp = GameServerClientHelper.Instance!.Ip,
+                    GameServerPort = GameServerClientHelper.Instance!.Port,
+                    AuthTokenKey = /*TEMP*/"a1b2c3",
+                }));
+        }
     }
 
     public class RoomManager
@@ -273,6 +367,14 @@ namespace VSNWebServer
                 info = null;
                 return false;
             }
+        }
+
+
+        static uint gid = 1000;
+        public static uint GetGameId()
+        {
+            // TODO
+            return gid++;
         }
     }
 

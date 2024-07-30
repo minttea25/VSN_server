@@ -22,6 +22,8 @@ namespace VSNWebServer.RoomServers
                 wssv.AddWebSocketService<WebSession>(path);
                 wssv.Start();
 
+                Console.WriteLine($"RoomServer is now listening on: {url}/{path}");
+
             }
             catch (Exception ex)
             {

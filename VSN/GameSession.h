@@ -5,7 +5,7 @@ public:
 	GameSession();
 	~GameSession();
 
-	void SetInfo(const uint gameId, const uint accountDbId, const std::string& authToken);
+	void TryConnectToMap(const VSN::ReqGameInfo* info);
 
 	/*inline-methods*/
 	std::shared_ptr<GameSession> SharedFromThis()
@@ -17,7 +17,6 @@ public:
 	{
 		_player = player;
 	}
-	std::string GetAuthToken() const { return _authToken; }
 	std::shared_ptr<class Player> GetPlayer() const { return _player; }
 	uint GetAccountDbId() const { return _accountDbId; }
 
@@ -27,6 +26,14 @@ public:
 	void OnDisconnected(const int error) override;
 	void OnRecvPacket(const char* buffer, const ushort id) override;
 
+private:
+	void DisconnectByMap(const char* msg)
+	{
+		const auto pkt = Packets::Simple(SIMPLE, std::string(msg));
+		Send(pkt.id, pkt.Buf(), pkt.size);
+
+		// TODO : Disconnect after sendin
+	}
 
 private:
 	std::string _remoteIp;
@@ -34,7 +41,6 @@ private:
 	
 	bool _ready;
 	uint _accountDbId;
-	std::string _authToken;
 	std::shared_ptr<class Player> _player;
 
 };

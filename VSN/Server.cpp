@@ -37,6 +37,32 @@ void WebSession::OnRecvPacket(const char* buffer, const ushort id)
 	}
 
 	DebugUtil::Show(pkt);
+
+	const int pSize = pkt->player_account_id()->size();
+	std::vector<PlayerData> pData;
+	for (int i = 0; i < pSize; ++i)
+	{
+		pData.push_back(
+			PlayerData
+			(
+				pkt->player_account_id()->Get(i),
+				pkt->player_character_type()->Get(i),
+				pkt->player_auth_token()->Get(i)->str()
+			)
+		);
+	}
+
+	std::vector<uint> items;
+	for (int i = 0; i < pkt->spawnable_items()->size(); ++i)
+	{
+		items.push_back(pkt->spawnable_items()->Get(i));
+	}
+	MapConfiguration mapConfig(pkt->map_type_id(), items, pkt->difficulty());
+
+	GameInfoData data(pkt->game_id(), pData, mapConfig);
+	GGameManager->CreateNewMap(data);
+
+	_managedMaps.insert({ pkt->game_id(), GGameManager->Map(pkt->game_id()) });
 }
 
 Server::Server(const std::wstring& ip, const ushort port)

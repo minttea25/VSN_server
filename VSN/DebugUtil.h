@@ -51,7 +51,7 @@ public:
 			return;
 		}
 
-		const auto p_size = data->player_account_db_id()->size();
+		const auto p_size = data->player_account_id()->size();
 		const auto c_size = data->player_character_type()->size();
 		const auto a_size = data->player_auth_token()->size();
 
@@ -69,7 +69,7 @@ public:
 
 		for (int i=0; i<p_size; ++i)
 		{
-			const auto id = data->player_account_db_id()->Get(i);
+			const auto id = data->player_account_id()->Get(i);
 			const auto character = data->player_character_type()->Get(i);
 			const auto auth = data->player_auth_token()->Get(i)->c_str();
 
@@ -84,9 +84,23 @@ public:
 		}
 		std::cout << std::endl;
 	}
+
+	static void Show(const VSN::ReqGameInfo* data)
+	{
+		if (data == nullptr)
+		{
+			std::cerr << "data is nullptr." << std::endl;
+			return;
+		}
+
+		std::cout << "GameId: " << data->game_id() << '\n';
+		std::cout << "AccountId: " << data->account_id() << '\n';
+		std::cout << "AuthToken: " << data->auth_token()->c_str() << std::endl;
+	}
 #else
 	static void Show(const VSN::MapData* map_data) {}
 	static void Show(const VSN::WebGameInfoData* data) {}
+	static void Show(const VSN::ReqGameInfo* data) {}
 #endif
 };
 

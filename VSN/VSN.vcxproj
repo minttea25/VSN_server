@@ -22,6 +22,7 @@
     <ClInclude Include="DataManager.h" />
     <ClInclude Include="DebugUtil.h" />
     <ClInclude Include="fbs_includes.h" />
+    <ClInclude Include="GameConst.h" />
     <ClInclude Include="GameInfo.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameMap.h" />

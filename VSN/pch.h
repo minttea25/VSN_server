@@ -115,6 +115,8 @@ using uint = unsigned int;
 
 #include "fbs_includes.h"
 
+#include "GameConst.h"
+
 #include "DebugUtil.h"
 
 #include "Global.h"

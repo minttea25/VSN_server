@@ -6,5 +6,11 @@
         {
             return true;
         }
+
+        public static string PlayerAuthToken(string ip, uint id)
+        {
+            // TODO
+            return "AuthToken";
+        }
     }
 }

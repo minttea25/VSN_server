@@ -43,6 +43,26 @@ void PacketHandler::ResponsePacket(const char* buffer, std::shared_ptr<GameSessi
 	const auto pkt = VSN::GetResponse(buffer);
 }
 
+void PacketHandler::ReqGameInfoPacket(const char* buffer, std::shared_ptr<GameSession> session)
+{
+	const auto pkt = VSN::GetReqGameInfo(buffer);
+
+	if (pkt == nullptr)
+	{
+		std::cerr << "Wrong pkt [ReqGameInfo]" << std::endl;
+		return;
+	}
+	DebugUtil::Show(pkt);
+
+	session->TryConnectToMap(pkt);
+}
+
+void PacketHandler::LoadComplete(const char* buffer, std::shared_ptr<GameSession> session)
+{
+	const auto pkt = VSN::GetSimplePacket(buffer);
+	// TODO
+}
+
 void PacketHandler::ReqGetExpPacket(const char* buffer, std::shared_ptr<GameSession> session)
 {
 	const auto pkt = VSN::GetReq_GetExp(buffer);

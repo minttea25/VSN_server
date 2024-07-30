@@ -1,0 +1,8 @@
+namespace VSN;
+
+table CountDown {
+    count: ushort;
+}
+
+
+root_type CountDown;

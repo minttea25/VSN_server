@@ -59,6 +59,9 @@
       <Filter>main</Filter>
     </ClInclude>
     <ClInclude Include="DebugUtil.h" />
+    <ClInclude Include="GameConst.h">
+      <Filter>game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PacketHandler.cpp">

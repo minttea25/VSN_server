@@ -17,6 +17,9 @@ namespace VSNWebServer.GameServer
         private readonly TcpClient _client = new();
         private NetworkStream? _networkStream = null;
 
+        public string Ip => _ip;
+        public int Port => _port;
+
         public async Task ConnectAsync()
         {
             await _client.ConnectAsync(_ip, _port);

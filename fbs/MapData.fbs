@@ -1,4 +1,4 @@
-include "../fbs/Types.fbs";
+include "Types.fbs";
 
 namespace VSN;
 

@@ -6,6 +6,9 @@ public:
 	static void RequestPacket(const char* buffer, std::shared_ptr<GameSession> session);
 	static void ResponsePacket(const char* buffer, std::shared_ptr<GameSession> session);
 
+	static void ReqGameInfoPacket(const char* buffer, std::shared_ptr<GameSession> session);
+	static void LoadComplete(const char* buffer, std::shared_ptr<GameSession> session);
+
 	static void ReqGetExpPacket(const char* buffer, std::shared_ptr<GameSession> session);
 	static void ReqGetItemPacket(const char* buffer, std::shared_ptr<GameSession> session);;
 	static void ReqMonsterDamagedPacket(const char* buffer, std::shared_ptr<GameSession> session);

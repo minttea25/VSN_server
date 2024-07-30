@@ -1,7 +1,9 @@
 #pragma once
 
 #include "WebGameInfo_generated.h"
-#include "GameStart_generated.h"
+#include "CountDown_generated.h"
+#include "ReqGameInfo_generated.h"
+#include "ResGameInfo_generated.h"
 #include "ItemSpawn_generated.h"
 #include "MonsterDamaged_generated.h"
 #include "MonsterDead_generated.h"

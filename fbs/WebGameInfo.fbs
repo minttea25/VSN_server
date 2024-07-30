@@ -1,0 +1,13 @@
+namespace VSN;
+
+table WebGameInfoData {
+    game_id: uint;
+    map_type_id: uint;
+    difficulty: ubyte;
+    spawnable_items: [uint];
+    player_account_id: [uint];
+    player_character_type: [uint];
+    player_auth_token: [string];
+}
+
+root_type WebGameInfoData;

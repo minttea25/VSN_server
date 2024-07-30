@@ -149,4 +149,14 @@
         public uint LastUpdate { get; set; } = 0;
         public List<WebChatData> NewChats { get; set; } = new();
     }
+
+    [System.Serializable]
+    public class WebGameStart : IWebResponse
+    {
+        public uint RoomId { get; set; }
+        public uint GameId { get; set; }
+        public string GameServerIp { get; set; } = string.Empty;
+        public int GameServerPort { get; set; }
+        public string AuthTokenKey { get; set; } = string.Empty;
+    }
 }

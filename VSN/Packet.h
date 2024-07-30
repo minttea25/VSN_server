@@ -35,6 +35,12 @@ enum PacketId : ushort
     // Res to client 2000 ~
     RES_GET_EXP = 2001,
 
+    REQ_GAME_INFO = 10001,
+    RES_GAME_INFO = 10002,
+    COUNTDOWN = 10003,
+
+    LOAD_COMPLETE = 30000,
+    START_GAME = 30001,
 };
 
 enum SimpleId
@@ -234,6 +240,44 @@ public:
         fb.Finish(pkt_ofs);
 
         return __PACKET(REQUEST);
+    }
+
+    static Packet ResGameInfo(
+        const bool ok, 
+        const NetCore::Vector<uint>& spawnable_items,
+        const uint map_type_id = 0,
+        const unsigned char difficulty = 0u, 
+        const VSN::Vector2& spawn_point = { 0, 0 })
+    {
+        if (ok == false)
+        {
+            __BUILDER(64);
+            const auto pkt_ofs = VSN::CreateResGameInfo(fb, false);
+            fb.Finish(pkt_ofs);
+
+            return __PACKET(RES_GAME_INFO);
+        }
+        else
+        {
+            __BUILDER(512);
+
+            const auto item_ofs = fb.CreateVector(spawnable_items);
+            const auto pkt_ofs = VSN::CreateResGameInfo(fb, true,
+                map_type_id, difficulty, item_ofs, &spawn_point);
+            fb.Finish(pkt_ofs);
+
+            return __PACKET(RES_GAME_INFO);
+        }
+    }
+
+    static Packet CountDown(const int count)
+    {
+        __BUILDER(64);
+
+        const auto pkt_ofs = VSN::CreateCountDown(fb, count);
+        fb.Finish(pkt_ofs);
+
+        return __PACKET(COUNTDOWN);
     }
 };
 

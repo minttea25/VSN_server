@@ -7,7 +7,7 @@ enum RequestType : ushort
 	LOBBY_READY = 2,
 	START_LOAD_GAME = 3,
 	READY_TO_START = 4,
-	START_GAME = 5,
+	START_GAME_ = 5,
 };
 
 enum RequestFixedId : ushort

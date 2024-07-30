@@ -1,9 +1,10 @@
 #include "pch.h"
 #include "GameMap.h"
 
-GameMap::GameMap(GameInfoData data)
+GameMap::GameMap(GameInfoData& data)
 	: _gameId(data.GameId),
-	_spawnableItems(ITEM_COUNTS, false)
+	_spawnableItems(ITEM_COUNTS, false),
+	_prep(data)
 {
 	// Create Players
 	for (auto& p : data.Players)
@@ -11,7 +12,7 @@ GameMap::GameMap(GameInfoData data)
 		auto player = NetCore::make_shared<Player>(++_nidProducer, p);
 
 		_players.insert({ ++_nidProducer, player });
-		_dbIdToPlayer.insert({ p.AccountDbId, player });
+		_playerIdToNid.insert({ p.AccountDbId, player->Nid()});
 	}
 
 	// Set Items spawnable
@@ -34,6 +35,22 @@ GameMap::GameMap(GameInfoData data)
 	_mapData = VSN::GetMapData(buf.data());
 
 	DebugUtil::Show(_mapData);
+
+	ASSERT_CRASH(_mapData->initial_player_spawnpoint()->size() >= GameConst::MAX_PLAYER_COUNT);
+
+	// init spawn point of players
+	int i = 0;
+	for (const auto& p : _players)
+	{
+		auto pos = _mapData->initial_player_spawnpoint()->Get(i);
+		p.second->_position = Vector2(pos->x(), pos->y());
+		i++;
+	}
+
+	// other game objects start at nid=101
+	_nidProducer = 100;
+
+	NetCore::GGlobalJobWorker->AddTimeJobQueue(shared_from_this());
 }
 
 GameMap::~GameMap()
@@ -41,62 +58,54 @@ GameMap::~GameMap()
 }
 
 
-bool GameMap::PlayerConnected(std::shared_ptr<GameSession> session)
+bool GameMap::TryPlayerConnect(const std::string& token, std::shared_ptr<GameSession> session)
 {
-	// It means the player is connected to server.
+	const uint playerId = session->GetAccountDbId();
+	// success
+	if (_prep.PlayerConnected(playerId, token))
+	{
+		// error
+		ASSERT_CRASH(_playerIdToNid.find(playerId) != _playerIdToNid.end());
 
-	// check
-	const uint id = session->GetAccountDbId();
-	if (_dbIdToPlayer.find(id) == _dbIdToPlayer.end())
+		const auto nid = _playerIdToNid.at(playerId);
+		return true;
+	}
+	// fail
+	else
 	{
 		return false;
 	}
-	const PlayerData& data = _dbIdToPlayer[id]->GetPlayerData();
-	if (std::strcmp(data.PlayerAuthToken.c_str(), session->GetAuthToken().c_str()) != 0)
-	{
-		return false;
-	}
-
-	session->SetPlayer(_dbIdToPlayer[id]);
-	_dbIdToPlayer[id]->SetSession(session);
-
-	// send info to client
-
-
-	return true;
 }
 
 void GameMap::PlayerReady(const uint accountDbId)
 {
-	if (_dbIdToPlayer.find(accountDbId) != _dbIdToPlayer.end())
+	_prep.PlayerReady(accountDbId);
+	if (_prep.AllPlayerReadyToStart())
 	{
-		_dbIdToPlayer[accountDbId]->Ready();
-	}
-
-	for (auto& p : _dbIdToPlayer)
-	{
-		if (p.second->IsReady() == false) return;
-	}
-
-	// all players are ready to start
-	StartGame();
+		// all players are ready to start
+		StartCountDown(10);
+	}	
 }
 
-void GameMap::StartGame()
+void GameMap::StartCountDown(int count)
 {
-	NetCore::GGlobalJobWorker->AddTimeJobQueue(shared_from_this());
-
-	// TEMP
-	Broadcast(Packets::Simple(SimpleId::SP_GAME_START, ""));
+	if (count == 0)
+	{
+		// Start game
+		Broadcast(Packets::Simple(START_GAME, "Start Game"));
+	}
+	else
+	{
+		// Send count down pkt to clients
+		Broadcast(Packets::CountDown(count));
+		ReserveJob(1000, &GameMap::StartCountDown, count - 1);
+	}
 }
 
 void GameMap::Broadcast(Packet&& pkt)
 {
-	for (auto& p : _dbIdToPlayer)
+	for (auto& p : _players)
 	{
-		if (p.second->IsReady())
-		{
-			p.second->Session().lock()->Send(pkt.id, pkt.Buf(), pkt.size);
-		}
+		p.second->Session().lock()->Send(pkt.id, pkt.Buf(), pkt.size);
 	}
 }

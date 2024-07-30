@@ -28,7 +28,9 @@ namespace VSNWebServer.RoomServers
         Ok = 100001,
         Bad = 100002,
 
+        
         GameStart = 9999999,
+        TestGameStart = 10000000,
     }
 
     /// <summary>
@@ -50,6 +52,9 @@ namespace VSNWebServer.RoomServers
             _handlers.Add((int)MessageTypes.GetPlayerInfo, GetPlayerInfo);
             _handlers.Add((int)MessageTypes.ChangeRoomName, ChangeRoomName);
             _handlers.Add((int)MessageTypes.ReqSendChat, SendChat);
+            
+            _handlers.Add((int)MessageTypes.TestGameStart, TestGameStart);
+            
             // TODO : add more
         }
 
@@ -210,6 +215,8 @@ namespace VSNWebServer.RoomServers
                 // TEMP
                 Console.WriteLine($"All players in Room [id={session.Room!.RoomId}] are ready.");
                 session.Room!.Broadcast(Utils.Json.Serialize(MessageTypes.GameStart, string.Empty));
+
+
             }
 
             return true;
@@ -347,6 +354,19 @@ namespace VSNWebServer.RoomServers
             // Broadcast recvd chat to clients
             session.Room!.Broadcast(Utils.Json.Serialize(MessageTypes.RecvChat,
                 new WebChatData() { UserName = session.User!.UserName, ChatContent = req.ChatContent }));
+
+            return true;
+        }
+    
+        public static bool TestGameStart(WebSession session, string json)
+        {
+            if (session.Joined == false)
+            {
+                Console.WriteLine($"[TestGameStart] The session is not joined.");
+                return false;
+            }
+
+            session.Room!.TestGameStart();
 
             return true;
         }

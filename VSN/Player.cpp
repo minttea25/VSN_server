@@ -2,7 +2,7 @@
 #include "Player.h"
 
 Player::Player(const uint nid, const PlayerData data)
-	: GameObject(nid), _data(data), _nid(nid), _ready(false)
+	: GameObject(nid), _nid(nid)
 {
 	// TEMP
 	_hp = 300;

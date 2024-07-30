@@ -22,6 +22,9 @@ private:
 		_handlers.insert({ REQUEST, PacketHandler::RequestPacket });
 		_handlers.insert({ RESPONSE, PacketHandler::ResponsePacket });
 
+		_handlers.insert({ REQ_GAME_INFO, PacketHandler::ReqGameInfoPacket });
+		_handlers.insert({ LOAD_COMPLETE, PacketHandler::LoadComplete });
+
 		_handlers.insert({ REQ_GET_EXP, PacketHandler::ReqGetExpPacket });
 		_handlers.insert({ REQ_GET_ITEM, PacketHandler::ReqGetItemPacket });
 		_handlers.insert({ REQ_MONSTER_DAMAGED, PacketHandler::ReqMonsterDamagedPacket });

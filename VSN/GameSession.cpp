@@ -11,14 +11,42 @@ GameSession::~GameSession()
 {
 }
 
-void GameSession::SetInfo(const uint gameId, const uint accountDbId, const std::string& authToken)
+void GameSession::TryConnectToMap(const VSN::ReqGameInfo* info)
 {
-	_authToken = authToken;
-	_accountDbId = accountDbId;
+	const auto map = GGameManager->Map(info->game_id());
+	if (map == nullptr)
+	{
+		const auto res = Packets::ResGameInfo(false, {});
+		Send(res.id, res.Buf(), res.size);
 
-	auto map = GGameManager->Map(gameId);
-	if (map == nullptr) Disconnect();
-	if (map->PlayerConnected(SharedFromThis()) == false) Disconnect();
+		DisconnectByMap("Invalid Game Id");
+		return;
+	}
+
+	if(map->TryPlayerConnect(info->auth_token()->str(), SharedFromThis()) == false)
+	{
+		const auto res = Packets::ResGameInfo(false, {});
+		Send(res.id, res.Buf(), res.size);
+
+		DisconnectByMap("Invalid Player Data");
+		return;
+	}
+
+	_accountDbId = info->account_id();
+
+	// send to game info to client
+	auto pos = map->GetPosition(_accountDbId);
+	const auto res = Packets::ResGameInfo(
+		true,
+		{},
+		map->GameId(),
+		map->Difficulty(),
+		{ pos.first, pos.second }
+	);
+	Send(res.id, res.Buf(), res.size);
+
+
+	LOG(INFO) << "Player [" << _accountDbId << "] joined game: " << info->game_id() << '\n';
 }
 
 void GameSession::OnConnected()

@@ -1,0 +1,14 @@
+include "Types.fbs";
+
+namespace VSN;
+
+table ResGameInfo {
+  ok: bool;
+  map_type_id: uint;
+  difficulty: byte;
+  spawnable_items: [uint];
+  spawn_point: Vector2;
+}
+
+
+root_type ResGameInfo;
