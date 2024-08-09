@@ -49,8 +49,6 @@ GameMap::GameMap(GameInfoData& data)
 
 	// other game objects start at nid=101
 	_nidProducer = 100;
-
-	NetCore::GGlobalJobWorker->AddTimeJobQueue(shared_from_this());
 }
 
 GameMap::~GameMap()
@@ -98,7 +96,8 @@ void GameMap::StartCountDown(int count)
 	{
 		// Send count down pkt to clients
 		Broadcast(Packets::CountDown(count));
-		ReserveJob(1000, &GameMap::StartCountDown, count - 1);
+		count--;
+		DISCARD PushReservableJob(1000, &GameMap::StartCountDown, count);
 	}
 }
 

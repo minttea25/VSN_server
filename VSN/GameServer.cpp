@@ -78,9 +78,9 @@ void GameServer::_netCoreWork()
 
 		_manager->DoWorkJob();
 
-		_manager->DoWorkReservedJob(RESERVED_JOB_DURATION);
+		_manager->CheckReservedJob();
 
-		GSessionManager->FlushSessions();
+		GSessionManager->FlushSessions(); // need?
 
 		this_thread::yield();
 	}

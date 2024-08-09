@@ -37,7 +37,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="RequestParser.h" />
-    <ClInclude Include="Server.h" />
+    <ClInclude Include="RoomServerSession.h" />
     <ClInclude Include="SessionManager.h" />
     <ClInclude Include="Vector2.h" />
   </ItemGroup>
@@ -60,7 +60,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Server.cpp" />
+    <ClCompile Include="RoomServerSession.cpp" />
     <ClCompile Include="SessionManager.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

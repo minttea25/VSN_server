@@ -1,7 +1,7 @@
 #include "pch.h"
-#include "Server.h"
+#include "RoomServerSession.h"
 
-void WebSession::OnConnected()
+void RoomServerSession::OnConnected()
 {
 	wchar_t wip[50]{};
 	if (Session::GetPeerName(&_port, wip, sizeof(wip)) == false)
@@ -14,26 +14,21 @@ void WebSession::OnConnected()
 
 	_remoteIp = NetCore::Utils::ToString(wip);
 
-	LOG(INFO) << "WebSession is connected to " << _remoteIp << ':' << _port;
+	LOG(INFO) << "RoomServerSession is connected to " << _remoteIp << ':' << _port;
 }
 
-void WebSession::OnSend(const int len)
+void RoomServerSession::OnSend(const NetCore::int32 len)
 {
 }
 
-void WebSession::OnDisconnected(const int error)
-{
-	LOG(INFO) << "WebSession is disconnected by " << error;
-}
-
-void WebSession::OnRecvPacket(const char* buffer, const ushort id)
+NetCore::uint32 RoomServerSession::OnRecv(const NetCore::_byte* buffer, const NetCore::uint32 len)
 {
 	const auto pkt = VSN::GetWebGameInfoData(buffer);
 
 	if (pkt == nullptr)
 	{
 		std::cerr << "Wrong buffer to parse GameInfoData.";
-		return;
+		return 0;
 	}
 
 	DebugUtil::Show(pkt);
@@ -63,6 +58,16 @@ void WebSession::OnRecvPacket(const char* buffer, const ushort id)
 	GGameManager->CreateNewMap(data);
 
 	_managedMaps.insert({ pkt->game_id(), GGameManager->Map(pkt->game_id()) });
+
+	// TODO : disconnect
+	Disconnect();
+
+	return len;
+}
+
+void RoomServerSession::OnDisconnected(const NetCore::int32 error)
+{
+	LOG(INFO) << "WebSession is disconnected by " << error;
 }
 
 Server::Server(const std::wstring& ip, const ushort port)
@@ -70,7 +75,7 @@ Server::Server(const std::wstring& ip, const ushort port)
 {
 	std::function<std::shared_ptr<NetCore::Session>()> factory
 		= []() -> std::shared_ptr<NetCore::Session> {
-		return NetCore::make_shared<WebSession>();
+		return NetCore::make_shared<RoomServerSession>();
 		};
 
 	_addr = NetCore::AddrUtils::GetTcpAddress(ip, port);
@@ -103,7 +108,7 @@ bool Server::Start()
 		LOG(INFO) << "Waiting the connection of web session on " << NetCore::Utils::ToString(_ip) << ":" << _port;
 		
 		_manager->AddTask([&]() {
-			LOG(INFO) << "[Web Session Server] Working IOCP thread";
+			LOG(INFO) << "[Room Session Server] Working IOCP thread";
 
 			while (true)
 			{
@@ -133,4 +138,14 @@ bool Server::Stop()
 		return false;
 	}
 	else return true;
+}
+
+PURE_VIRTUAL void RoomServerSession::SendRaw(const NetCore::_byte* buffer)
+{
+	return PURE_VIRTUAL void();
+}
+
+PURE_VIRTUAL void RoomServerSession::Send(const NetCore::uint16 id, NetCore::_ubyte* ptr, const NetCore::uint16 size)
+{
+	return PURE_VIRTUAL void();
 }

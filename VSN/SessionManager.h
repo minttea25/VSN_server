@@ -18,27 +18,24 @@ public:
 	{
 		NetCore::WriteLock l(__lock);
 
-		_sessions.insert({ session->SessionId(), session });
+		_sessions.insert(session);
 	}
 
-	void RemoveSession(uint sessionId)
+	void RemoveSession(std::shared_ptr<GameSession> session)
 	{
 		NetCore::WriteLock l(__lock);
 
-		_sessions.erase(sessionId);
+		_sessions.erase(session);
 	}
 
 	void FlushSessions()
 	{
-		for (auto& kv : _sessions)
-		{
-			kv.second->Flush();
-		}
+		for (auto& s : _sessions) s->Flush();
 	}
 
 private:
 	NetCore::RWLock __lock;
-	NetCore::HashMap<uint, std::shared_ptr<GameSession>> _sessions;
+	NetCore::Set<std::shared_ptr<GameSession>> _sessions;
 
 	friend class GameManager;
 };

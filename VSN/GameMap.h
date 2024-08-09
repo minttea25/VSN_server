@@ -56,7 +56,7 @@ private:
 
 };
 
-class GameMap : public NetCore::GlobalTimeJobSerializer
+class GameMap : public NetCore::JobSerializer
 {
 	// TEMP
 	static const uint ITEM_COUNTS = 5;
@@ -73,7 +73,6 @@ public:
 	void UpdatePlayer(const uint nid, VSN::PlayerState state)
 	{
 		// TODO : copy state
-		//ReserveJob(0, &GameMap::_updatePlayer, nid, state);
 	}
 
 	void Broadcast(Packet&& pkt);
@@ -87,7 +86,11 @@ public:
 		auto& pos = _players[nid]->Position();
 		return { pos.x, pos.y };
 	}
-private:
+	
+	std::shared_ptr<GameMap> Shared_from_this()
+	{
+		return static_pointer_cast<GameMap>(shared_from_this());
+	}
 
 private:
 	const uint _gameId;

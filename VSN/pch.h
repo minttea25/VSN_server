@@ -86,10 +86,8 @@
 // Job Headers
 #include "netcore/Job.h"
 #include "netcore/JobSerializer.h"
-#include "netcore/TimeJob.h"
-#include "netcore/GlobalTimeJobSerializer.h"
-#include "netcore/GlobalJobSerializer.h"
-#include "netcore/GlobalJobWorker.h"
+#include "netcore/ReservableJob.h"
+#include "netcore/JobWorker.h"
 
 // flatbuffers lib Headers
 #include "flatbuffers/flatbuffers.h"
@@ -122,7 +120,7 @@ using uint = unsigned int;
 #include "Global.h"
 #include "Vector2.h"
 #include "DataManager.h"
-#include "Server.h"
+#include "RoomServerSession.h"
 #include "GameInfo.h"
 #include "GameObject.h"
 

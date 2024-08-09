@@ -29,6 +29,6 @@ void GameManager::Broadcast(Packet& pkt)
 {
 	for (auto& s : GSessionManager->_sessions)
 	{
-		s.second->Send(pkt.id, pkt.Buf(), pkt.size);
+		s->Send(pkt.id, pkt.Buf(), pkt.size);
 	}
 }

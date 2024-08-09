@@ -55,7 +55,7 @@
     <ClInclude Include="DataManager.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="Server.h">
+    <ClInclude Include="RoomServerSession.h">
       <Filter>main</Filter>
     </ClInclude>
     <ClInclude Include="DebugUtil.h" />
@@ -103,7 +103,7 @@
     <ClCompile Include="DataManager.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Server.cpp">
+    <ClCompile Include="RoomServerSession.cpp">
       <Filter>main</Filter>
     </ClCompile>
     <ClCompile Include="DebugUtil.cpp" />
