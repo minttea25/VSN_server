@@ -33,16 +33,17 @@ NetCore::uint32 RoomServerSession::OnRecv(const NetCore::_byte* buffer, const Ne
 
 	DebugUtil::Show(pkt);
 
-	const int pSize = pkt->player_account_id()->size();
+	const int pSize = pkt->player_data()->size();
 	std::vector<PlayerData> pData;
 	for (int i = 0; i < pSize; ++i)
 	{
+		const auto player = pkt->player_data()->Get(i);
 		pData.push_back(
 			PlayerData
 			(
-				pkt->player_account_id()->Get(i),
-				pkt->player_character_type()->Get(i),
-				pkt->player_auth_token()->Get(i)->str()
+				player->player_uid(),
+				player->player_character_tid(),
+				Authentication::CreateAuthToken(pkt->game_auth_key()->str(), player->player_uid())
 			)
 		);
 	}
@@ -106,7 +107,7 @@ bool Server::Start()
 	else
 	{
 		LOG(INFO) << "Waiting the connection of web session on " << NetCore::Utils::ToString(_ip) << ":" << _port;
-		
+
 		_manager->AddTask([&]() {
 			LOG(INFO) << "[Room Session Server] Working IOCP thread";
 
@@ -121,7 +122,7 @@ bool Server::Start()
 				this_thread::yield();
 			}
 			});
-		
+
 		return true;
 	}
 }

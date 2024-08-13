@@ -5,15 +5,13 @@ class GameObject : public enable_shared_from_this<GameObject>
 public:
 	GameObject(const uint nid) : _nid(nid), _speed(0) {}
 	uint Nid() const { return _nid; }
-	Vector2& Position() { return _position; }
-
+	Vector2 Position() const { return _position; }
+	void SetPosition(const float x, const float y) { _position.x = x; _position.y = y; }
 protected:
 	uint _nid;
 	Vector2 _position;
 	Vector2 _dir;
 	float _speed;
-
-	friend class GameMap;
 };
 
 class StaticGameObject : public enable_shared_from_this<StaticGameObject>

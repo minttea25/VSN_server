@@ -83,10 +83,10 @@ public:
 	std::pair<float, float> GetPosition(const uint playerId)
 	{
 		auto nid = _playerIdToNid.at(playerId);
-		auto& pos = _players[nid]->Position();
+		auto pos = _players[nid]->Position();
 		return { pos.x, pos.y };
 	}
-	
+
 	std::shared_ptr<GameMap> Shared_from_this()
 	{
 		return static_pointer_cast<GameMap>(shared_from_this());
@@ -104,11 +104,10 @@ private:
 
 	// [playerId, nid]
 	NetCore::HashMap<uint, uint> _playerIdToNid;
-	
+
 	NetCore::Vector<bool> _spawnableItems;
 	ushort _difficulty;
 	uint _mapTypeId;
 
 	uint _nidProducer = 0;
 };
-

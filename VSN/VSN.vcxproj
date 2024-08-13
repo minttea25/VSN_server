@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Authentication.h" />
     <ClInclude Include="DataManager.h" />
     <ClInclude Include="DebugUtil.h" />
     <ClInclude Include="fbs_includes.h" />

@@ -51,11 +51,9 @@ public:
 			return;
 		}
 
-		const auto p_size = data->player_account_id()->size();
-		const auto c_size = data->player_character_type()->size();
-		const auto a_size = data->player_auth_token()->size();
+		const auto p_size = data->player_data()->size();
 
-		if (p_size != c_size || c_size != a_size)
+		if (p_size != data->player_count())
 		{
 			std::cerr << "the size of player data does not match.";
 			return;
@@ -64,16 +62,18 @@ public:
 		std::cout << "Game Id: " << data->game_id() <<
 			"\nMap Type Id: " << data->map_type_id() <<
 			"\nDifficulty: " << (uint)(data->difficulty()) <<
+			"\nAuth Key: " << data->game_auth_key()->c_str() <<
 			"\nPlayer Count: " << p_size <<
 			"\nPlayers\n";
 
-		for (int i=0; i<p_size; ++i)
+		for (int i = 0; i < p_size; ++i)
 		{
-			const auto id = data->player_account_id()->Get(i);
-			const auto character = data->player_character_type()->Get(i);
-			const auto auth = data->player_auth_token()->Get(i)->c_str();
+			const auto player = data->player_data()->Get(i);
 
-			std::cout << "[" << id << "]: " << character << ", " << auth << '\n';
+			const auto id = player->player_uid();
+			const auto character = player->player_character_tid();
+
+			std::cout << "[" << id << "]: " << character << '\n';
 		}
 
 		const auto iSize = data->spawnable_items()->size();
@@ -85,7 +85,7 @@ public:
 		std::cout << std::endl;
 	}
 
-	static void Show(const VSN::ReqGameInfo* data)
+	static void Show(const VSN::ConnectGame* data)
 	{
 		if (data == nullptr)
 		{
@@ -93,14 +93,14 @@ public:
 			return;
 		}
 
-		std::cout << "GameId: " << data->game_id() << '\n';
-		std::cout << "AccountId: " << data->account_id() << '\n';
-		std::cout << "AuthToken: " << data->auth_token()->c_str() << std::endl;
+		std::cout << "Game id: " << data->game_id() <<
+			"Player Uid: " << data->player_uid() <<
+			"Auth Token: " << data->auth_token()->c_str() << std::endl;
 	}
 #else
 	static void Show(const VSN::MapData* map_data) {}
 	static void Show(const VSN::WebGameInfoData* data) {}
-	static void Show(const VSN::ReqGameInfo* data) {}
+	static void Show(const VSN::ConnectGame* data) {}
 #endif
 };
 

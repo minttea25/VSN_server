@@ -1,5 +1,5 @@
 #pragma once
-class GameServer
+class GameServer : public NetCore::JobSerializer
 {
 public:
 	GameServer(const std::wstring& ip, const ushort port, const ushort sessionCount, const ushort backlog);

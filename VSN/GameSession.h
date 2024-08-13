@@ -5,7 +5,7 @@ public:
 	GameSession();
 	~GameSession();
 
-	void TryConnectToMap(const VSN::ReqGameInfo* info);
+	void TryConnectToMap(const VSN::ConnectGame* info);
 
 	/*inline-methods*/
 	std::shared_ptr<GameSession> SharedFromThis()
@@ -29,7 +29,7 @@ public:
 private:
 	void DisconnectByMap(const char* msg)
 	{
-		const auto pkt = Packets::Simple(SIMPLE, std::string(msg));
+		const auto pkt = Packets::Simple(SIMPLE_MESSAGE, std::string(msg));
 		Send(pkt.id, pkt.Buf(), pkt.size);
 
 		// TODO : Disconnect after sendin
@@ -38,7 +38,7 @@ private:
 private:
 	std::string _remoteIp;
 	ushort _port;
-	
+
 	bool _ready;
 	uint _accountDbId;
 	std::shared_ptr<class Player> _player;

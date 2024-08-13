@@ -12,7 +12,7 @@ GameMap::GameMap(GameInfoData& data)
 		auto player = NetCore::make_shared<Player>(++_nidProducer, p);
 
 		_players.insert({ ++_nidProducer, player });
-		_playerIdToNid.insert({ p.AccountDbId, player->Nid()});
+		_playerIdToNid.insert({ p.AccountDbId, player->Nid() });
 	}
 
 	// Set Items spawnable
@@ -43,7 +43,7 @@ GameMap::GameMap(GameInfoData& data)
 	for (const auto& p : _players)
 	{
 		auto pos = _mapData->initial_player_spawnpoint()->Get(i);
-		p.second->_position = Vector2(pos->x(), pos->y());
+		p.second->SetPosition(pos->x(), pos->y());
 		i++;
 	}
 
@@ -82,7 +82,7 @@ void GameMap::PlayerReady(const uint accountDbId)
 	{
 		// all players are ready to start
 		StartCountDown(10);
-	}	
+	}
 }
 
 void GameMap::StartCountDown(int count)
@@ -90,7 +90,7 @@ void GameMap::StartCountDown(int count)
 	if (count == 0)
 	{
 		// Start game
-		Broadcast(Packets::Simple(START_GAME, "Start Game"));
+		Broadcast(Packets::Simple(GAME_START_SIGNAL, "Start Game"));
 	}
 	else
 	{

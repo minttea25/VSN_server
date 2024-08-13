@@ -7,7 +7,7 @@ enum PacketId : ushort
     // Common 1 ~
     REQUEST = 1,
     RESPONSE = 2,
-    SIMPLE = 3,
+    SIMPLE_MESSAGE = 3,
 
     // Game 100 ~
     ITEM_SPAWN = 102,
@@ -38,9 +38,8 @@ enum PacketId : ushort
     REQ_GAME_INFO = 10001,
     RES_GAME_INFO = 10002,
     COUNTDOWN = 10003,
-
-    LOAD_COMPLETE = 30000,
-    START_GAME = 30001,
+    LOAD_COMPLETE = 10004,
+    GAME_START_SIGNAL = 10005,
 };
 
 enum SimpleId
@@ -61,7 +60,9 @@ struct Packet
 {
 public:
     Packet(const ushort id, const uint size, uint8_t* ptr)
-        : id(id), size(size), ptr(ptr) {}
+        : id(id), size(size), ptr(ptr)
+    {
+    }
 
     uint8_t* Buf() const { return ptr; }
 
@@ -85,21 +86,11 @@ public:
     {
         __BUILDER(128);
         auto msg_os = fb.CreateString(msg);
-        auto pkt_os = VSN::CreateSimplePacket(fb, id, msg_os);
+        auto pkt_os = VSN::CreateMessagePacket(fb, id, msg_os);
         fb.Finish(pkt_os);
 
-        return __PACKET(SIMPLE);
+        return __PACKET(SIMPLE_MESSAGE);
 
-    }
-
-    static Packet Request(const uint req_id)
-    {
-        NetCore::FBAllocator allocator;
-        flatbuffers::FlatBufferBuilder fb(64, &allocator);
-        auto pkt_os = VSN::CreateRequest(fb, req_id);
-        fb.Finish(pkt_os);
-
-        return Packet{ REQUEST, fb.GetSize(), fb.GetBufferPointer() };
     }
 
     static Packet Response(const uint req_id, const short res)
@@ -155,16 +146,13 @@ public:
         return __PACKET(MONSTER_STATE);
     }
 
-    static Packet PlayerState(const uint playerId, const uint changeFlag, 
+    static Packet PlayerState(const uint playerId, const uint changeFlag,
         const bool towardLeft, const VSN::Vector2& pos, const unsigned char state)
     {
         __BUILDER(256);
 
-        const VSN::Vector2* ppos = (changeFlag | (1u << 1)) ? &pos : nullptr;
 
-
-        auto pkt_ofs = VSN::CreatePlayerState(fb, playerId, changeFlag,
-            towardLeft, ppos, state);
+        auto pkt_ofs = VSN::CreatePlayerState(fb, playerId, &pos, state, towardLeft);
         fb.Finish(pkt_ofs);
 
         return __PACKET(PLAYER_STATE);
@@ -204,19 +192,7 @@ public:
     {
         __BUILDER(128);
 
-        auto upgrade_ofs = VSN::CreateSkillUpgrade(fb, skill_type, value);
-        auto pkt_ofs = VSN::CreatePlayerUpgrade(fb, player_id, VSN::UpgradeInfo_SkillUpgrade, flatbuffers::Offset<void>(upgrade_ofs.o));
-        fb.Finish(pkt_ofs);
-
-        return __PACKET(PLAYER_UPGRADE);
-    }
-
-    static Packet PlayerUpgrade_Stat(const uint player_id, const unsigned char stat_type, const ushort value)
-    {
-        __BUILDER(128);
-
-        auto upgrade_ofs = VSN::CreateStatUpgrade(fb, stat_type, value);
-        auto pkt_ofs = VSN::CreatePlayerUpgrade(fb, player_id, VSN::UpgradeInfo_StatUpgrade, flatbuffers::Offset<void>(upgrade_ofs.o));
+        auto pkt_ofs = VSN::CreatePlayerUpgrade(fb, player_id, skill_type, value);
         fb.Finish(pkt_ofs);
 
         return __PACKET(PLAYER_UPGRADE);
@@ -242,17 +218,19 @@ public:
         return __PACKET(REQUEST);
     }
 
-    static Packet ResGameInfo(
-        const bool ok, 
-        const NetCore::Vector<uint>& spawnable_items,
+    static Packet LoadGameInfo(
+        const bool ok,
+        const uint player_id,
+        const NetCore::Vector<uint>& spawnable_items = {},
         const uint map_type_id = 0,
-        const unsigned char difficulty = 0u, 
-        const VSN::Vector2& spawn_point = { 0, 0 })
+        const unsigned char difficulty = 0u,
+        const VSN::Vector2& spawn_point = { 0, 0 },
+        const NetCore::Vector<VSN::PlayerSpawnInfo>& player_spawns = {})
     {
         if (ok == false)
         {
             __BUILDER(64);
-            const auto pkt_ofs = VSN::CreateResGameInfo(fb, false);
+            const auto pkt_ofs = VSN::CreateGameLoadInfo(fb, false);
             fb.Finish(pkt_ofs);
 
             return __PACKET(RES_GAME_INFO);
@@ -260,10 +238,15 @@ public:
         else
         {
             __BUILDER(512);
-
             const auto item_ofs = fb.CreateVector(spawnable_items);
-            const auto pkt_ofs = VSN::CreateResGameInfo(fb, true,
-                map_type_id, difficulty, item_ofs, &spawn_point);
+            auto player_spawn_ofs = fb.CreateVectorOfStructs(player_spawns);
+            const auto pkt_ofs = VSN::CreateGameLoadInfo(fb,
+                true,
+                map_type_id,
+                difficulty,
+                item_ofs,
+                /*client_player_id*/player_id,
+                player_spawn_ofs);
             fb.Finish(pkt_ofs);
 
             return __PACKET(RES_GAME_INFO);
