@@ -22,7 +22,7 @@ public struct WebGameInfoData : IFlatbufferObject
 
   public uint GameId { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetUint(o + __p.bb_pos) : (uint)0; } }
   public uint MapTypeId { get { int o = __p.__offset(6); return o != 0 ? __p.bb.GetUint(o + __p.bb_pos) : (uint)0; } }
-  public byte Difficulty { get { int o = __p.__offset(8); return o != 0 ? __p.bb.Get(o + __p.bb_pos) : (byte)0; } }
+  public uint Difficulty { get { int o = __p.__offset(8); return o != 0 ? __p.bb.GetUint(o + __p.bb_pos) : (uint)0; } }
   public uint SpawnableItems(int j) { int o = __p.__offset(10); return o != 0 ? __p.bb.GetUint(__p.__vector(o) + j * 4) : (uint)0; }
   public int SpawnableItemsLength { get { int o = __p.__offset(10); return o != 0 ? __p.__vector_len(o) : 0; } }
 #if ENABLE_SPAN_T
@@ -31,72 +31,50 @@ public struct WebGameInfoData : IFlatbufferObject
   public ArraySegment<byte>? GetSpawnableItemsBytes() { return __p.__vector_as_arraysegment(10); }
 #endif
   public uint[] GetSpawnableItemsArray() { return __p.__vector_as_array<uint>(10); }
-  public uint PlayerAccountId(int j) { int o = __p.__offset(12); return o != 0 ? __p.bb.GetUint(__p.__vector(o) + j * 4) : (uint)0; }
-  public int PlayerAccountIdLength { get { int o = __p.__offset(12); return o != 0 ? __p.__vector_len(o) : 0; } }
+  public uint PlayerCount { get { int o = __p.__offset(12); return o != 0 ? __p.bb.GetUint(o + __p.bb_pos) : (uint)0; } }
+  public VSN.PlayerInfo? PlayerData(int j) { int o = __p.__offset(14); return o != 0 ? (VSN.PlayerInfo?)(new VSN.PlayerInfo()).__assign(__p.__vector(o) + j * 8, __p.bb) : null; }
+  public int PlayerDataLength { get { int o = __p.__offset(14); return o != 0 ? __p.__vector_len(o) : 0; } }
+  public string GameAuthKey { get { int o = __p.__offset(16); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
 #if ENABLE_SPAN_T
-  public Span<uint> GetPlayerAccountIdBytes() { return __p.__vector_as_span<uint>(12, 4); }
+  public Span<byte> GetGameAuthKeyBytes() { return __p.__vector_as_span<byte>(16, 1); }
 #else
-  public ArraySegment<byte>? GetPlayerAccountIdBytes() { return __p.__vector_as_arraysegment(12); }
+  public ArraySegment<byte>? GetGameAuthKeyBytes() { return __p.__vector_as_arraysegment(16); }
 #endif
-  public uint[] GetPlayerAccountIdArray() { return __p.__vector_as_array<uint>(12); }
-  public uint PlayerCharacterType(int j) { int o = __p.__offset(14); return o != 0 ? __p.bb.GetUint(__p.__vector(o) + j * 4) : (uint)0; }
-  public int PlayerCharacterTypeLength { get { int o = __p.__offset(14); return o != 0 ? __p.__vector_len(o) : 0; } }
-#if ENABLE_SPAN_T
-  public Span<uint> GetPlayerCharacterTypeBytes() { return __p.__vector_as_span<uint>(14, 4); }
-#else
-  public ArraySegment<byte>? GetPlayerCharacterTypeBytes() { return __p.__vector_as_arraysegment(14); }
-#endif
-  public uint[] GetPlayerCharacterTypeArray() { return __p.__vector_as_array<uint>(14); }
-  public string PlayerAuthToken(int j) { int o = __p.__offset(16); return o != 0 ? __p.__string(__p.__vector(o) + j * 4) : null; }
-  public int PlayerAuthTokenLength { get { int o = __p.__offset(16); return o != 0 ? __p.__vector_len(o) : 0; } }
+  public byte[] GetGameAuthKeyArray() { return __p.__vector_as_array<byte>(16); }
 
   public static Offset<VSN.WebGameInfoData> CreateWebGameInfoData(FlatBufferBuilder builder,
       uint game_id = 0,
       uint map_type_id = 0,
-      byte difficulty = 0,
+      uint difficulty = 0,
       VectorOffset spawnable_itemsOffset = default(VectorOffset),
-      VectorOffset player_account_idOffset = default(VectorOffset),
-      VectorOffset player_character_typeOffset = default(VectorOffset),
-      VectorOffset player_auth_tokenOffset = default(VectorOffset)) {
+      uint player_count = 0,
+      VectorOffset player_dataOffset = default(VectorOffset),
+      StringOffset game_auth_keyOffset = default(StringOffset)) {
     builder.StartTable(7);
-    WebGameInfoData.AddPlayerAuthToken(builder, player_auth_tokenOffset);
-    WebGameInfoData.AddPlayerCharacterType(builder, player_character_typeOffset);
-    WebGameInfoData.AddPlayerAccountId(builder, player_account_idOffset);
+    WebGameInfoData.AddGameAuthKey(builder, game_auth_keyOffset);
+    WebGameInfoData.AddPlayerData(builder, player_dataOffset);
+    WebGameInfoData.AddPlayerCount(builder, player_count);
     WebGameInfoData.AddSpawnableItems(builder, spawnable_itemsOffset);
+    WebGameInfoData.AddDifficulty(builder, difficulty);
     WebGameInfoData.AddMapTypeId(builder, map_type_id);
     WebGameInfoData.AddGameId(builder, game_id);
-    WebGameInfoData.AddDifficulty(builder, difficulty);
     return WebGameInfoData.EndWebGameInfoData(builder);
   }
 
   public static void StartWebGameInfoData(FlatBufferBuilder builder) { builder.StartTable(7); }
   public static void AddGameId(FlatBufferBuilder builder, uint gameId) { builder.AddUint(0, gameId, 0); }
   public static void AddMapTypeId(FlatBufferBuilder builder, uint mapTypeId) { builder.AddUint(1, mapTypeId, 0); }
-  public static void AddDifficulty(FlatBufferBuilder builder, byte difficulty) { builder.AddByte(2, difficulty, 0); }
+  public static void AddDifficulty(FlatBufferBuilder builder, uint difficulty) { builder.AddUint(2, difficulty, 0); }
   public static void AddSpawnableItems(FlatBufferBuilder builder, VectorOffset spawnableItemsOffset) { builder.AddOffset(3, spawnableItemsOffset.Value, 0); }
   public static VectorOffset CreateSpawnableItemsVector(FlatBufferBuilder builder, uint[] data) { builder.StartVector(4, data.Length, 4); for (int i = data.Length - 1; i >= 0; i--) builder.AddUint(data[i]); return builder.EndVector(); }
   public static VectorOffset CreateSpawnableItemsVectorBlock(FlatBufferBuilder builder, uint[] data) { builder.StartVector(4, data.Length, 4); builder.Add(data); return builder.EndVector(); }
   public static VectorOffset CreateSpawnableItemsVectorBlock(FlatBufferBuilder builder, ArraySegment<uint> data) { builder.StartVector(4, data.Count, 4); builder.Add(data); return builder.EndVector(); }
   public static VectorOffset CreateSpawnableItemsVectorBlock(FlatBufferBuilder builder, IntPtr dataPtr, int sizeInBytes) { builder.StartVector(1, sizeInBytes, 1); builder.Add<uint>(dataPtr, sizeInBytes); return builder.EndVector(); }
   public static void StartSpawnableItemsVector(FlatBufferBuilder builder, int numElems) { builder.StartVector(4, numElems, 4); }
-  public static void AddPlayerAccountId(FlatBufferBuilder builder, VectorOffset playerAccountIdOffset) { builder.AddOffset(4, playerAccountIdOffset.Value, 0); }
-  public static VectorOffset CreatePlayerAccountIdVector(FlatBufferBuilder builder, uint[] data) { builder.StartVector(4, data.Length, 4); for (int i = data.Length - 1; i >= 0; i--) builder.AddUint(data[i]); return builder.EndVector(); }
-  public static VectorOffset CreatePlayerAccountIdVectorBlock(FlatBufferBuilder builder, uint[] data) { builder.StartVector(4, data.Length, 4); builder.Add(data); return builder.EndVector(); }
-  public static VectorOffset CreatePlayerAccountIdVectorBlock(FlatBufferBuilder builder, ArraySegment<uint> data) { builder.StartVector(4, data.Count, 4); builder.Add(data); return builder.EndVector(); }
-  public static VectorOffset CreatePlayerAccountIdVectorBlock(FlatBufferBuilder builder, IntPtr dataPtr, int sizeInBytes) { builder.StartVector(1, sizeInBytes, 1); builder.Add<uint>(dataPtr, sizeInBytes); return builder.EndVector(); }
-  public static void StartPlayerAccountIdVector(FlatBufferBuilder builder, int numElems) { builder.StartVector(4, numElems, 4); }
-  public static void AddPlayerCharacterType(FlatBufferBuilder builder, VectorOffset playerCharacterTypeOffset) { builder.AddOffset(5, playerCharacterTypeOffset.Value, 0); }
-  public static VectorOffset CreatePlayerCharacterTypeVector(FlatBufferBuilder builder, uint[] data) { builder.StartVector(4, data.Length, 4); for (int i = data.Length - 1; i >= 0; i--) builder.AddUint(data[i]); return builder.EndVector(); }
-  public static VectorOffset CreatePlayerCharacterTypeVectorBlock(FlatBufferBuilder builder, uint[] data) { builder.StartVector(4, data.Length, 4); builder.Add(data); return builder.EndVector(); }
-  public static VectorOffset CreatePlayerCharacterTypeVectorBlock(FlatBufferBuilder builder, ArraySegment<uint> data) { builder.StartVector(4, data.Count, 4); builder.Add(data); return builder.EndVector(); }
-  public static VectorOffset CreatePlayerCharacterTypeVectorBlock(FlatBufferBuilder builder, IntPtr dataPtr, int sizeInBytes) { builder.StartVector(1, sizeInBytes, 1); builder.Add<uint>(dataPtr, sizeInBytes); return builder.EndVector(); }
-  public static void StartPlayerCharacterTypeVector(FlatBufferBuilder builder, int numElems) { builder.StartVector(4, numElems, 4); }
-  public static void AddPlayerAuthToken(FlatBufferBuilder builder, VectorOffset playerAuthTokenOffset) { builder.AddOffset(6, playerAuthTokenOffset.Value, 0); }
-  public static VectorOffset CreatePlayerAuthTokenVector(FlatBufferBuilder builder, StringOffset[] data) { builder.StartVector(4, data.Length, 4); for (int i = data.Length - 1; i >= 0; i--) builder.AddOffset(data[i].Value); return builder.EndVector(); }
-  public static VectorOffset CreatePlayerAuthTokenVectorBlock(FlatBufferBuilder builder, StringOffset[] data) { builder.StartVector(4, data.Length, 4); builder.Add(data); return builder.EndVector(); }
-  public static VectorOffset CreatePlayerAuthTokenVectorBlock(FlatBufferBuilder builder, ArraySegment<StringOffset> data) { builder.StartVector(4, data.Count, 4); builder.Add(data); return builder.EndVector(); }
-  public static VectorOffset CreatePlayerAuthTokenVectorBlock(FlatBufferBuilder builder, IntPtr dataPtr, int sizeInBytes) { builder.StartVector(1, sizeInBytes, 1); builder.Add<StringOffset>(dataPtr, sizeInBytes); return builder.EndVector(); }
-  public static void StartPlayerAuthTokenVector(FlatBufferBuilder builder, int numElems) { builder.StartVector(4, numElems, 4); }
+  public static void AddPlayerCount(FlatBufferBuilder builder, uint playerCount) { builder.AddUint(4, playerCount, 0); }
+  public static void AddPlayerData(FlatBufferBuilder builder, VectorOffset playerDataOffset) { builder.AddOffset(5, playerDataOffset.Value, 0); }
+  public static void StartPlayerDataVector(FlatBufferBuilder builder, int numElems) { builder.StartVector(8, numElems, 4); }
+  public static void AddGameAuthKey(FlatBufferBuilder builder, StringOffset gameAuthKeyOffset) { builder.AddOffset(6, gameAuthKeyOffset.Value, 0); }
   public static Offset<VSN.WebGameInfoData> EndWebGameInfoData(FlatBufferBuilder builder) {
     int o = builder.EndTable();
     return new Offset<VSN.WebGameInfoData>(o);
@@ -113,11 +91,11 @@ static public class WebGameInfoDataVerify
     return verifier.VerifyTableStart(tablePos)
       && verifier.VerifyField(tablePos, 4 /*GameId*/, 4 /*uint*/, 4, false)
       && verifier.VerifyField(tablePos, 6 /*MapTypeId*/, 4 /*uint*/, 4, false)
-      && verifier.VerifyField(tablePos, 8 /*Difficulty*/, 1 /*byte*/, 1, false)
+      && verifier.VerifyField(tablePos, 8 /*Difficulty*/, 4 /*uint*/, 4, false)
       && verifier.VerifyVectorOfData(tablePos, 10 /*SpawnableItems*/, 4 /*uint*/, false)
-      && verifier.VerifyVectorOfData(tablePos, 12 /*PlayerAccountId*/, 4 /*uint*/, false)
-      && verifier.VerifyVectorOfData(tablePos, 14 /*PlayerCharacterType*/, 4 /*uint*/, false)
-      && verifier.VerifyVectorOfStrings(tablePos, 16 /*PlayerAuthToken*/, false)
+      && verifier.VerifyField(tablePos, 12 /*PlayerCount*/, 4 /*uint*/, 4, false)
+      && verifier.VerifyVectorOfData(tablePos, 14 /*PlayerData*/, 8 /*VSN.PlayerInfo*/, false)
+      && verifier.VerifyString(tablePos, 16 /*GameAuthKey*/, false)
       && verifier.VerifyTableEnd(tablePos);
   }
 }

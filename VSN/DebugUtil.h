@@ -66,7 +66,7 @@ public:
 			"\nPlayer Count: " << p_size <<
 			"\nPlayers\n";
 
-		for (int i = 0; i < p_size; ++i)
+		for (auto i = 0; i < p_size; ++i)
 		{
 			const auto player = data->player_data()->Get(i);
 
@@ -78,7 +78,7 @@ public:
 
 		const auto iSize = data->spawnable_items()->size();
 		std::cout << "Spawnable Items: ";
-		for (int i = 0; i < iSize; ++i)
+		for (auto i = 0; i < iSize; ++i)
 		{
 			std::cout << data->spawnable_items()->Get(i) << ", ";
 		}

@@ -2,12 +2,12 @@ include "Types.fbs";
 
 namespace VSN;
 
+// Server <-> Client
 table PlayerState {
-  player_id : uint;
-  change_flag: uint;
-  toward_left: bool;
-  position: Vector2;
-  state: ubyte;
+  player_nid : uint; // network id of the player
+  position: Vector2; // current position of the player
+  state: ubyte; // enum value of the player state
+  toward_left: bool; // if the player is looking at left
 }
 
 root_type PlayerState;

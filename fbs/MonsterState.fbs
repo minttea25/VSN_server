@@ -3,15 +3,15 @@ include "Types.fbs";
 namespace VSN;
 
 struct MonsterStateInfo {
-  nid : uint;
-  state: ubyte;
-  pos: Vector2;
-  dir: Vector2;
+  nid : uint; // network id
+  state: ubyte; // state value of enum
+  pos: Vector2; // current position of the monster
+  dir: Vector2; // unit-move-direction of the monster (Client can set the direction that the monster's looking at.)
 }
 
+// Server -> Client
 table MonsterStates {
-  infos: [MonsterStateInfo];
+  infos: [MonsterStateInfo]; // list of the monster states
 }
-
 
 root_type MonsterStates;

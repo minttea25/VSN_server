@@ -3,11 +3,12 @@ include "Types.fbs";
 namespace VSN;
 
 struct MonsterDeadInfo {
-  nid: uint;
+  nid: uint; // network id of the dead monster
 }
 
+// Server -> Client
 table MonsterDead {
-  infos: [MonsterDeadInfo];
+  infos: [MonsterDeadInfo]; // list of the dead monsters
 }
 
 root_type MonsterDead;

@@ -3,13 +3,14 @@ include "Types.fbs";
 namespace VSN;
 
 struct DamagedMonsterInfo {
-  nid : uint;
-  damage: short;
-  dead: bool;
+  nid : uint; // network id of the monster
+  damage: short; // damage value
+  dead: bool; // if the monster is dead
 }
 
+// Server <-> Client
 table MonsterDamaged {
-  infos: [DamagedMonsterInfo];
+  infos: [DamagedMonsterInfo]; // list of damaged monsters
 }
 
 

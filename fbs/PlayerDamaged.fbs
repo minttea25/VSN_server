@@ -1,9 +1,9 @@
 namespace VSN;
 
+// Server -> Client
 table PlayerDamaged {
-  player_id : uint;
-  damage: int;
+  player_nid : uint; // network id of the damaged player
+  damage: int; // amount of damage
 }
-
 
 root_type PlayerDamaged;

@@ -1,6 +1,8 @@
 ﻿using Google.FlatBuffers;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
+using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using VSN;
 using VSNWebServer.GameServer;
@@ -31,6 +33,15 @@ namespace VSNWebServer
             IsReady = false;
             IsHost = host;
             Session = session;
+            return true;
+        }
+
+        public bool SetDefaultUser(uint userId, string userName)
+        {
+            if (UserId != INVALID_USER_ID) return false;
+            UserId = userId;
+            UserName = userName;
+            IsReady = true;
             return true;
         }
 
@@ -234,88 +245,104 @@ namespace VSNWebServer
             // TODO : Check condition
 
             uint game_id = RoomManager.GetGameId();
-            uint map_type_id = 1;
-            uint[] spawnable_items = [1, 2, 3, 4, 5];
+            uint map_type_id = 1; // TODO
+            uint[] spawnable_items = [1, 2, 3, 4, 5]; // TODO
             byte difficulty = (byte)1;
-            uint[] pid = new uint[MaxPlayerCount];
-            uint[] pcid = new uint[MaxPlayerCount];
-            string[] auth_tokens = new string[MaxPlayerCount];
-            int i = 0;
+            string auth_key = "AUTH_KEY"; // TODO
+
+            FlatBufferBuilder fb = new(1024);
+            List<Offset<VSN.PlayerInfo>> info_ofs = new();
             foreach (var user in Users)
             {
-                pid[i] = user.UserId;
-
-                pcid[i] = 1;// TODO
-
-                auth_tokens[i] = Security.PlayerAuthToken("127.0.0.1", user.UserId);
-
-
-                i++;
+                info_ofs.Add(VSN.PlayerInfo.CreatePlayerInfo(fb, user.UserId, /*TODO*/1));
             }
-
-            i = 0;
-            FlatBufferBuilder fb = new(1024);
-            StringOffset[] auth_string_ofs = new StringOffset[MaxPlayerCount];
-            foreach (var token in auth_tokens)
-            {
-                auth_string_ofs[i++] = fb.CreateString(token);
-            }
+            var p_ofs = fb.CreateVectorOfTables(info_ofs.ToArray());
+            StringOffset auth_string_ofs = fb.CreateString(auth_key);
             var item_ofs = WebGameInfoData.CreateSpawnableItemsVector(fb, spawnable_items);
-            var pid_ofs = WebGameInfoData.CreatePlayerAccountIdVector(fb, pid);
-            var pcid_ofs = WebGameInfoData.CreatePlayerCharacterTypeVector(fb, pcid);
-            var auth_ofs = WebGameInfoData.CreatePlayerAuthTokenVector(fb, auth_string_ofs);
-            var data = WebGameInfoData.CreateWebGameInfoData(
-                fb, game_id: game_id, map_type_id: map_type_id,
-                spawnable_itemsOffset: item_ofs,
+            var data = WebGameInfoData.CreateWebGameInfoData(fb,
+                game_id: game_id,
+                map_type_id: map_type_id,
                 difficulty: difficulty,
-                player_account_idOffset: pid_ofs,
-                player_character_typeOffset: pcid_ofs,
-                player_auth_tokenOffset: auth_ofs);
+                spawnable_itemsOffset: item_ofs,
+                player_count: MaxPlayerCount,
+                player_dataOffset: p_ofs,
+                game_auth_keyOffset: auth_string_ofs
+                );
             fb.Finish(data.Value);
-            GameServerClientHelper.Instance?.SendAsync(fb.SizedByteArray());
+            GameServerClientHelper.Process((client) =>
+            {
+                client.SendAsync(fb.SizedByteArray());
+
+                // send to client
+                Broadcast(Utils.Json.Serialize(MessageTypes.GameStart,
+                    new WebGameStart()
+                    {
+                        RoomId = RoomId,
+                        GameId = game_id,
+                        GameServerIp = client.Ip,
+                        GameServerPort = client.Port,
+                        AuthTokenKey = /*TEMP*/"a1b2c3",
+                    }));
+            });
         }
     
         public void TestGameStart()
         {
+            uint t = 0;
+            while (true)
+            {
+                if (PlayerCount == MaxPlayerCount) break;
+
+                uint userId = 100000 + (t++);
+                var user = Users.FirstOrDefault(u => u.Valid == false && userId != u.UserId);
+                if (user == null) break;
+                else
+                {
+                    user.SetDefaultUser(userId, "default user");
+                    PlayerCount++;
+                }
+            }
+
             uint game_id = RoomManager.GetGameId();
-            uint map_type_id = 1;
-            uint[] spawnable_items = [1, 2, 3, 4, 5];
-            byte difficulty = 1;
-            uint[] pid = new uint[1];
-            uint[] pcid = new uint[1];
-            string[] auth_tokens = new string[1];
-            pid[0] = Users[0].UserId;
-            pcid[0] = 1;// TODO
-            auth_tokens[0] = Security.PlayerAuthToken("127.0.0.1", Users[0].UserId);
+            uint map_type_id = 1; // TODO
+            uint[] spawnable_items = [1, 2, 3, 4, 5]; // TODO
+            byte difficulty = (byte)1;
+            string auth_key = "AUTH_KEY"; // TODO
 
             FlatBufferBuilder fb = new(1024);
-            StringOffset[] auth_string_ofs = new StringOffset[1];
-            auth_string_ofs[0] = fb.CreateString(auth_tokens[0]);
-
+            List<Offset<VSN.PlayerInfo>> info_ofs = new();
+            foreach (var user in Users)
+            {
+                info_ofs.Add(VSN.PlayerInfo.CreatePlayerInfo(fb, user.UserId, /*TODO*/1));
+            }
+            var p_ofs = fb.CreateVectorOfTables(info_ofs.ToArray());
+            StringOffset auth_string_ofs = fb.CreateString(auth_key);
             var item_ofs = WebGameInfoData.CreateSpawnableItemsVector(fb, spawnable_items);
-            var pid_ofs = WebGameInfoData.CreatePlayerAccountIdVector(fb, pid);
-            var pcid_ofs = WebGameInfoData.CreatePlayerCharacterTypeVector(fb, pcid);
-            var auth_ofs = WebGameInfoData.CreatePlayerAuthTokenVector(fb, auth_string_ofs);
-            var data = WebGameInfoData.CreateWebGameInfoData(
-                fb, game_id: game_id, map_type_id: map_type_id,
+            var data = WebGameInfoData.CreateWebGameInfoData(fb,
+                game_id: game_id,
+                map_type_id: map_type_id,
                 difficulty: difficulty,
                 spawnable_itemsOffset: item_ofs,
-                player_account_idOffset: pid_ofs,
-                player_character_typeOffset: pcid_ofs,
-                player_auth_tokenOffset: auth_ofs);
+                player_count: MaxPlayerCount,
+                player_dataOffset: p_ofs,
+                game_auth_keyOffset: auth_string_ofs
+                );
             fb.Finish(data.Value);
-            GameServerClientHelper.Instance?.SendAsync(fb.SizedByteArray());
+            GameServerClientHelper.Process((client) =>
+            {
+                client.SendAsync(fb.SizedByteArray());
 
-            // send to client
-            Broadcast(Utils.Json.Serialize(MessageTypes.GameStart,
-                new WebGameStart()
-                {
-                    RoomId = RoomId,
-                    GameId = game_id,
-                    GameServerIp = GameServerClientHelper.Instance!.Ip,
-                    GameServerPort = GameServerClientHelper.Instance!.Port,
-                    AuthTokenKey = /*TEMP*/"a1b2c3",
-                }));
+                // send to client
+                Broadcast(Utils.Json.Serialize(MessageTypes.GameStart,
+                    new WebGameStart()
+                    {
+                        RoomId = RoomId,
+                        GameId = game_id,
+                        GameServerIp = client.Ip,
+                        GameServerPort = client.Port,
+                        AuthTokenKey = /*TEMP*/"a1b2c3",
+                    }));
+            });
         }
     }
 

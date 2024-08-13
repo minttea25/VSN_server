@@ -1,7 +1,8 @@
 namespace VSN;
 
+// Server -> Client
 table CountDown {
-    count: ushort;
+    count: ushort; // count number to start the game.
 }
 
 

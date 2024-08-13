@@ -1,9 +1,9 @@
 namespace VSN;
 
+// Client -> Server
 table Req_GetItem {
-  req_id: uint;
-  item_nid: uint;
+  req_id: uint; // request id of the client
+  item_nid: uint; // the item network id player got
 }
-
 
 root_type Req_GetItem;

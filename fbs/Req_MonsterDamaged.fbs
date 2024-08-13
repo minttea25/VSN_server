@@ -3,14 +3,14 @@ include "Types.fbs";
 namespace VSN;
 
 struct DamagedMonsterReqInfo {
-  nid : uint;
-  damage: short;
+  nid : uint; // network id of the damaged monster
+  damage: short; // amount value of damage
 }
 
+// Client -> Server
 table Req_MonsterDamaged {
-  req_id: uint;
-  infos: [DamagedMonsterReqInfo];
+  req_id: uint; // request id of the client
+  infos: [DamagedMonsterReqInfo]; // list of the info of the damaged monsters
 }
-
 
 root_type Req_MonsterDamaged;

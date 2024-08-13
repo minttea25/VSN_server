@@ -1,8 +1,8 @@
 namespace VSN;
 
-table SimplePacket {
+table MessagePacket {
   id: uint;
   msg: string;
 }
 
-root_type SimplePacket;
+root_type MessagePacket;

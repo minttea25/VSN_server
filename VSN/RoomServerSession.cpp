@@ -49,7 +49,7 @@ NetCore::uint32 RoomServerSession::OnRecv(const NetCore::_byte* buffer, const Ne
 	}
 
 	std::vector<uint> items;
-	for (int i = 0; i < pkt->spawnable_items()->size(); ++i)
+	for (auto i = 0; i < pkt->spawnable_items()->size(); ++i)
 	{
 		items.push_back(pkt->spawnable_items()->Get(i));
 	}

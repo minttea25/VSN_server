@@ -1,0 +1,11 @@
+namespace VSN;
+
+table GameServerInfo {
+  game_id: uint;
+  room_id: uint;
+  game_server_port: int;
+  game_server_ip: string;
+  auth_token_key: string;
+}
+
+root_type GameServerInfo;

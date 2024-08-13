@@ -1,10 +1,9 @@
 namespace VSN;
 
-table Req_PlayerDamaged {
-  req_id: uint;
-  damage: int;
-  dead: bool;
+// Client -> Server
+table Req_MyPlayerDamaged {
+  req_id: uint; // request id of the client
+  damage: short; // amount value of the damange
 }
 
-
-root_type Req_PlayerDamaged;
+root_type Req_MyPlayerDamaged;

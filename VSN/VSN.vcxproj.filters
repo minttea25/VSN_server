@@ -64,7 +64,9 @@
     <ClInclude Include="GameConst.h">
       <Filter>game</Filter>
     </ClInclude>
-    <ClInclude Include="RoomServerSession.h" />
+    <ClInclude Include="RoomServerSession.h">
+      <Filter>main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PacketHandler.cpp">
@@ -109,7 +111,9 @@
     <ClCompile Include="DebugUtil.cpp">
       <Filter>utils</Filter>
     </ClCompile>
-    <ClCompile Include="RoomServerSession.cpp" />
+    <ClCompile Include="RoomServerSession.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="network">

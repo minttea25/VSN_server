@@ -1,11 +1,10 @@
 namespace VSN;
 
-// if player_id is not my id, despawn the item;
+// Server <-> Client
 table PlayerGetItem {
-  player_id: uint;
-  item_nid: uint;
-  item_type: ubyte;
+  player_nid: uint; // network id of the player
+  item_nid: uint; // network id of the item
+  item_type: ubyte; // type of the item
 }
-
 
 root_type PlayerGetItem;

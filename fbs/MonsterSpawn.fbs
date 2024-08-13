@@ -3,14 +3,15 @@ include "Types.fbs";
 namespace VSN;
 
 struct MonsterSpawnInfo {
-  nid: uint;
-  monster_type: ushort;
-  pos: Vector2;
+  nid: uint; // network id of the monster
+  monster_type: ushort; // type type of the monster
+  pos: Vector2; // spawn position of the monster
+  count: uint; // count of the monsters (group)
 }
 
+// Server -> Client
 table SpawnMonsters {
-  infos: [MonsterSpawnInfo];
+  infos: [MonsterSpawnInfo]; // list of the monsters which will be spawned.
 }
-
 
 root_type SpawnMonsters;

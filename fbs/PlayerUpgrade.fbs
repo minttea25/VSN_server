@@ -1,23 +1,10 @@
 namespace VSN;
 
-union UpgradeInfo {
-  StatUpgrade, SkillUpgrade
-}
-
-table StatUpgrade {
-  stat_type: ubyte;
-  value: ushort;
-}
-
-table SkillUpgrade {
-  skill_type: ubyte;
-  value: ushort = 1;
-}
-
+// Client -> Server
 table PlayerUpgrade {
-  player_id: uint;
-  info: UpgradeInfo;
+  player_nid: uint; // network id of the player
+  skill_type_id: uint; // the type id of the skill (passive and active)
+  value: uint; // the value of the upgrades
 }
-
 
 root_type PlayerUpgrade;

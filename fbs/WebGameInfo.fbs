@@ -1,13 +1,19 @@
 namespace VSN;
 
+struct PlayerInfo {
+    player_uid: uint; // player unique id
+    player_character_tid: uint; // character type id that player selected
+}
+
+// RoomServer -> GameServer
 table WebGameInfoData {
-    game_id: uint;
-    map_type_id: uint;
-    difficulty: ubyte;
-    spawnable_items: [uint];
-    player_account_id: [uint];
-    player_character_type: [uint];
-    player_auth_token: [string];
+    game_id: uint; // unique game id that room sever issued
+    map_type_id: uint; // map type id of the game
+    difficulty: uint; // difficulty of the game (enum value)
+    spawnable_items: [uint]; // list of id of items that can be spawnable in the game.
+    player_count: uint; // count of the player.
+    player_data: [PlayerInfo]; // list of player data
+    game_auth_key: string; // the hash key to create auth token for connecting the game server
 }
 
 root_type WebGameInfoData;

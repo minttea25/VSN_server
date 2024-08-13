@@ -1,0 +1,10 @@
+namespace VSN;
+
+// Client -> Server
+table ConnectGame {
+  game_id : uint; // the game id that client is trying to connect
+  player_uid : uint; // player uid
+  auth_token : string; // auth token created with auto key from room server
+}
+
+root_type ConnectGame;

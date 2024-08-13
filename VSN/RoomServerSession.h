@@ -37,7 +37,7 @@ public:
 	bool Stop();
 
 private:
-	static constexpr DWORD GET_STATUS_TIMEOUT_MILLISECONDS = 1000;
+	static constexpr DWORD GET_STATUS_TIMEOUT_MILLISECONDS = 100;
 
 	std::atomic<bool> _off = false;
 

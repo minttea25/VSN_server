@@ -17,14 +17,14 @@ int main(int argc, char* argv)
 		std::vector<uint8_t> buf;
 		GDataManager->LoadMapData(1, buf);
 		auto map_data = VSN::GetMapData(buf.data());
-		DebugUtil::Show(map_data);
+		//DebugUtil::Show(map_data);
 
 	}
 	{
 		std::vector<uint8_t> buf;
 		GDataManager->LoadMapData(2, buf);
 		auto map_data = VSN::GetMapData(buf.data());
-		DebugUtil::Show(map_data);
+		//DebugUtil::Show(map_data);
 	}
 
 	NetCore::InitNetCore(argv, LOGDIR);

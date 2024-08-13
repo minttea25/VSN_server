@@ -1,0 +1,20 @@
+include "Types.fbs";
+
+namespace VSN;
+
+struct PlayerSpawnInfo {
+  player_nid: uint; // network id of the player
+  pos: Vector2; // the spawn position of the player
+}
+
+// Server -> Client
+table GameLoadInfo {
+  ok: bool; // if the client is successfully certified. (if this value is false, the others can be ignored.)
+  map_type_id: uint; // the type id of the map
+  difficulty: ushort; // enum value of difficulty
+  spawnable_items: [uint]; // spawnable item list to show in the display of client
+  client_player_nid: uint; // network id of the player
+  player_spawn: [PlayerSpawnInfo];
+}
+
+root_type GameLoadInfo;

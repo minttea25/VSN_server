@@ -1,9 +1,9 @@
 namespace VSN;
 
+// Server -> Client
 table PlayerLevelUp {
-  player_id: uint;
-  now_level: ushort;
+  player_nid: uint; // network id of the player
+  now_level: ushort; // the updated level of the player
 }
-
 
 root_type PlayerLevelUp;
