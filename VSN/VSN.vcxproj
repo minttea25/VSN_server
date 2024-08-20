@@ -37,6 +37,7 @@
     <ClInclude Include="PacketManager.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Random.h" />
     <ClInclude Include="RequestParser.h" />
     <ClInclude Include="RoomServerSession.h" />
     <ClInclude Include="SessionManager.h" />

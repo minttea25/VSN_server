@@ -64,8 +64,13 @@ public:
 	GameMap(GameInfoData& data);
 	~GameMap();
 
-	/*Game Preparations*/
-	bool TryPlayerConnect(const std::string& token, std::shared_ptr<GameSession> session);
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="token"></param>
+	/// <param name="session"></param>
+	/// <returns>Nid of player</returns>
+	uint TryPlayerConnect(const std::string& token, std::shared_ptr<GameSession> session);
 	void PlayerReady(const uint accountDbId);
 
 	void StartCountDown(int count);
@@ -80,11 +85,15 @@ public:
 	uint GameId() const { return _gameId; }
 	unsigned short Difficulty() const { return _difficulty; }
 
-	std::pair<float, float> GetPosition(const uint playerId)
+	NetCore::Vector<VSN::PlayerSpawnInfo> PlayerSpawnInfo()
 	{
-		auto nid = _playerIdToNid.at(playerId);
-		auto pos = _players[nid]->Position();
-		return { pos.x, pos.y };
+		NetCore::Vector<VSN::PlayerSpawnInfo> v;
+		for (auto& p : _players)
+		{
+			auto pos = p.second->Position();
+			v.push_back(VSN::PlayerSpawnInfo(p.first, VSN::Vector2(pos.x, pos.y)));
+		}
+		return v;
 	}
 
 	std::shared_ptr<GameMap> Shared_from_this()
@@ -96,6 +105,7 @@ private:
 	const uint _gameId;
 	const VSN::MapData* _mapData;
 	GamePreparation _prep;
+	NetCore::Atomic<int> _connectedCount = 0;
 
 	// [nid, player]
 	NetCore::HashMap<uint, std::shared_ptr<Player>> _players;

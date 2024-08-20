@@ -18,16 +18,17 @@ void GameSession::TryConnectToMap(const VSN::ConnectGame* data)
 	const auto map = GGameManager->Map(data->game_id());
 	if (map == nullptr)
 	{
-		const auto res = Packets::LoadGameInfo(false, _accountDbId);
+		const auto res = Packets::GameLoadInfo(false, _accountDbId);
 		Send(res.id, res.Buf(), res.size);
 
 		DisconnectByMap("Invalid Game Id");
 		return;
 	}
 
-	if (map->TryPlayerConnect(data->auth_token()->str(), SharedFromThis()) == false)
+	uint nid = map->TryPlayerConnect(data->auth_token()->str(), SharedFromThis());
+	if (nid == 0)
 	{
-		const auto res = Packets::LoadGameInfo(false, _accountDbId);
+		const auto res = Packets::GameLoadInfo(false, _accountDbId);
 		Send(res.id, res.Buf(), res.size);
 
 		DisconnectByMap("Invalid Player Data");
@@ -36,20 +37,18 @@ void GameSession::TryConnectToMap(const VSN::ConnectGame* data)
 
 	// send to game info to client
 	// TEMP
-	auto pos = map->GetPosition(_accountDbId);
-	const auto res = Packets::LoadGameInfo(
+	const auto res = Packets::GameLoadInfo(
 		true,
-		_accountDbId,
-		{ 1, 2, 3, 4, 5 },
+		/*player nid*/nid,
+		/*spawnable items*/{1, 2, 3, 4, 5},
 		map->GameId(),
 		map->Difficulty(),
-		{ pos.first, pos.second },
-		{/*TODO: player spawns*/ }
+		/*TODO: player spawns*/ map->PlayerSpawnInfo()
 	);
 	Send(res.id, res.Buf(), res.size);
 
 
-	LOG(INFO) << "Player [" << _accountDbId << "] joined game: " << data->game_id() << '\n';
+	LOG(INFO) << "Player [" << _accountDbId << "] joined game: " << data->game_id()  << " with NID=" << nid << '\n';
 }
 
 void GameSession::OnConnected()

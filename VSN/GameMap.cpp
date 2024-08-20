@@ -48,7 +48,7 @@ GameMap::GameMap(GameInfoData& data)
 	}
 
 	// other game objects start at nid=101
-	_nidProducer = 100;
+	_nidProducer = 101;
 }
 
 GameMap::~GameMap()
@@ -56,7 +56,7 @@ GameMap::~GameMap()
 }
 
 
-bool GameMap::TryPlayerConnect(const std::string& token, std::shared_ptr<GameSession> session)
+uint GameMap::TryPlayerConnect(const std::string& token, std::shared_ptr<GameSession> session)
 {
 	const uint playerId = session->GetAccountDbId();
 	// success
@@ -66,12 +66,12 @@ bool GameMap::TryPlayerConnect(const std::string& token, std::shared_ptr<GameSes
 		ASSERT_CRASH(_playerIdToNid.find(playerId) != _playerIdToNid.end());
 
 		const auto nid = _playerIdToNid.at(playerId);
-		return true;
+		return nid;
 	}
 	// fail
 	else
 	{
-		return false;
+		return 0;
 	}
 }
 

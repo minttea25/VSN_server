@@ -327,10 +327,12 @@ namespace VSNWebServer
                 player_dataOffset: p_ofs,
                 game_auth_keyOffset: auth_string_ofs
                 );
+            var size = fb.SizedByteArray();
             fb.Finish(data.Value);
             GameServerClientHelper.Process((client) =>
             {
-                client.SendAsync(fb.SizedByteArray());
+                var arr = fb.SizedByteArray();
+                client.SendAsync(arr);
 
                 // send to client
                 Broadcast(Utils.Json.Serialize(MessageTypes.GameStart,

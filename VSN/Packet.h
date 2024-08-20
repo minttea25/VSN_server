@@ -35,7 +35,7 @@ enum PacketId : ushort
     // Res to client 2000 ~
     RES_GET_EXP = 2001,
 
-    REQ_GAME_INFO = 10001,
+    CONNECT_GAME = 10001,
     RES_GAME_INFO = 10002,
     COUNTDOWN = 10003,
     LOAD_COMPLETE = 10004,
@@ -218,13 +218,12 @@ public:
         return __PACKET(REQUEST);
     }
 
-    static Packet LoadGameInfo(
+    static Packet GameLoadInfo(
         const bool ok,
-        const uint player_id,
+        const uint player_nid,
         const NetCore::Vector<uint>& spawnable_items = {},
         const uint map_type_id = 0,
         const unsigned char difficulty = 0u,
-        const VSN::Vector2& spawn_point = { 0, 0 },
         const NetCore::Vector<VSN::PlayerSpawnInfo>& player_spawns = {})
     {
         if (ok == false)
@@ -245,7 +244,7 @@ public:
                 map_type_id,
                 difficulty,
                 item_ofs,
-                /*client_player_id*/player_id,
+                /*client_player_nid*/player_nid,
                 player_spawn_ofs);
             fb.Finish(pkt_ofs);
 

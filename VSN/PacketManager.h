@@ -21,7 +21,7 @@ private:
 	{
 		_handlers.insert({ RESPONSE, PacketHandler::ResponsePacket });
 
-		_handlers.insert({ REQ_GAME_INFO, PacketHandler::ConnectGame });
+		_handlers.insert({ CONNECT_GAME, PacketHandler::ConnectGame });
 		_handlers.insert({ LOAD_COMPLETE, PacketHandler::LoadComplete });
 
 		_handlers.insert({ REQ_GET_EXP, PacketHandler::ReqGetExpPacket });
